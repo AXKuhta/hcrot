@@ -1,12 +1,12 @@
-CC = gcc -O2 -Wall -Wextra -Wpedantic
+CC = gcc -O2 -Wall -Wextra -Wpedantic -I"include/"
 
 all: tests.exe
 
-tests.exe: tensor.o
+tests.exe: tensor.o tests.o
 
 # All linkage
 %.exe:
-	@echo " [LD]" $<
+	@echo " [LD]" $@
 	@$(CC) $^ -o $@
 
 # All .c files

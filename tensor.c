@@ -3,14 +3,9 @@
 #include <stdio.h>
 #include <assert.h>
 
-typedef struct tensor_t {
-	char* datatype;
-	void* storage;
-	int dimensions;
-	int shape[];
-} tensor_t;
+#include "tensor_t.h"
 
-size_t apply_padding(size_t size) {
+static size_t apply_padding(size_t size) {
 	return size + size % (16 * 4);
 }
 
@@ -54,12 +49,4 @@ void debug_tensor(tensor_t* tensor) {
 		printf("%d%s", tensor->shape[i], tensor->dimensions - i > 1 ? ", " : "");
 
 	printf("), \"%s\")\n", tensor->datatype);
-}
-
-// Shape(4, 16) => 2, (int[]){4, 16}
-#define Shape(...) (sizeof((int[]){__VA_ARGS__}) / sizeof(int)), ((int[]){__VA_ARGS__})
-
-int main() {
-	tensor_t* x = init_tensor(Shape(4, 16), "f32");
-	debug_tensor(x);
 }
