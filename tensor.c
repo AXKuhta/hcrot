@@ -10,15 +10,25 @@ typedef struct tensor_t {
 	int shape[];
 } tensor_t;
 
+size_t apply_padding(size_t size) {
+	return size + size % (16 * 4);
+}
+
 size_t tensor_size(const tensor_t* tensor) {
+	size_t element_size = 0;
 	size_t elements = 1;
 
 	for (int i = 0; i < tensor->dimensions; i++)
 		elements *= tensor->shape[i];
 
-	if (strcmp(tensor->datatype, "f32") == 0) return elements*4;
+	if (strcmp(tensor->datatype, "f32") == 0) { element_size = 4; }
+	else if (strcmp(tensor->datatype, "i32") == 0) { element_size = 4; }
+	else {
+		printf("Unknown datatype: [%s]\n", tensor->datatype);
+		exit(-1);
+	}
 
-	__builtin_unreachable();
+	return apply_padding(elements * element_size);
 }
 
 tensor_t* init_tensor(int dimensions, int shape[], char* datatype) {
