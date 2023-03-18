@@ -7,7 +7,9 @@ typedef float f32;
 // AVX 		4 ops	(-O2 -march=sandybridge)
 // AVX2 	2 ops	(-O2 -march=skylake)
 // AVX512F 	1 op 	(-O2 -march=icelake-server)
+#ifndef K_STRIDE
 #define K_STRIDE 16
+#endif
 
 static int strides_cleanly(const size_t size) {
 	return size % K_STRIDE == 0;

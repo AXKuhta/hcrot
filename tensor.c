@@ -9,19 +9,22 @@ static size_t apply_padding(size_t size) {
 	return size + size % (16 * 4);
 }
 
-size_t tensor_size(const tensor_t* tensor) {
-	size_t element_size = 0;
+static size_t datatype_size(const char* datatype) {
+	if (strcmp(datatype, "f32") == 0) { return 4; }
+	else if (strcmp(datatype, "i32") == 0) { return 4; }
+	else {
+		printf("Unknown datatype: [%s]\n", datatype);
+		exit(-1);
+		return 0;
+	}
+}
+
+static size_t tensor_size(const tensor_t* tensor) {
+	size_t element_size = datatype_size(tensor->storage.datatype);
 	size_t elements = 1;
 
 	for (int i = 0; i < tensor->dimensions; i++)
 		elements *= tensor->shape[i];
-
-	if (strcmp(tensor->datatype, "f32") == 0) { element_size = 4; }
-	else if (strcmp(tensor->datatype, "i32") == 0) { element_size = 4; }
-	else {
-		printf("Unknown datatype: [%s]\n", tensor->datatype);
-		exit(-1);
-	}
 
 	return apply_padding(elements * element_size);
 }
@@ -29,7 +32,6 @@ size_t tensor_size(const tensor_t* tensor) {
 tensor_t* init_tensor(int dimensions, int shape[], char* datatype) {
 	tensor_t* tensor = malloc(sizeof(tensor_t) + sizeof(int)*dimensions);
 
-	tensor->datatype = datatype;
 	tensor->dimensions = dimensions;
 	
 	for (int i = 0; i < dimensions; i++) {
@@ -37,7 +39,9 @@ tensor_t* init_tensor(int dimensions, int shape[], char* datatype) {
 		assert(shape[i] > 0);
 	}
 
-	tensor->storage = malloc(tensor_size(tensor));
+	tensor->storage.datatype = datatype;
+	tensor->storage.size = tensor_size(tensor);
+	tensor->storage.memory = malloc(tensor->storage.size);
 
 	return tensor;
 }
@@ -48,5 +52,5 @@ void debug_tensor(tensor_t* tensor) {
 	for (int i = 0; i < tensor->dimensions; i++)
 		printf("%d%s", tensor->shape[i], tensor->dimensions - i > 1 ? ", " : "");
 
-	printf("), \"%s\")\n", tensor->datatype);
+	printf("), \"%s\")\n", tensor->storage.datatype);
 }
