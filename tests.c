@@ -1,16 +1,23 @@
 #include <stddef.h>
+#include <assert.h>
 #include <stdio.h>
 
 #include "api.h"
 
+void test_set_get() {
+	tensor_t* x = init_tensor(Shape(4), "f32");
+
+	for (int i = 0; i < 4; i++)
+		set_f32(x, Shape(i), i);
+
+	for (int i = 0; i < 4; i++)
+		assert(get_f32(x, Shape(i)) == i);
+}
+
 int main() {
-	tensor_t* x = init_tensor(Shape(4, 16), "f32");
-	tensor_t* y = init_tensor(Shape(4, 16), "f32");
+	test_set_get();
 
-	add_inplace(y, x);
+	printf("Self-testing OK\n");
 
-	debug_tensor(y);
-
-	printf("[3]: %zu\n", linear_index_dense(y, Shape(3)));
-	printf("[1, 3]: %zu\n", linear_index_dense(y, Shape(1, 3)));
+	return 0;
 }

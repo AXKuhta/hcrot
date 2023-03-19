@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <assert.h>
 
-typedef float f32;
+#include "simd.h"
 
 // SSE2 	2 loops (-O2 -march=core2)
 // AVX 		4 ops	(-O2 -march=sandybridge)
