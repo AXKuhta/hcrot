@@ -21,4 +21,5 @@ typedef struct tensor_t {
 #define Index(...) Shape(__VA_ARGS__)
 
 tensor_t* init_tensor(int shape_dimensions, size_t shape[], char* datatype);
+void free_tensor(tensor_t* tensor);
 void debug_tensor(tensor_t* tensor);

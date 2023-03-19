@@ -56,6 +56,11 @@ tensor_t* init_tensor(int shape_dimensions, size_t shape[], char* datatype) {
 	return tensor;
 }
 
+void free_tensor(tensor_t* tensor) {
+	free(tensor->storage.memory);
+	free(tensor);
+}
+
 void debug_tensor(tensor_t* tensor) {
 	printf("tensor(Shape(");
 
