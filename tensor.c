@@ -23,21 +23,31 @@ static size_t tensor_size(const tensor_t* tensor) {
 	size_t element_size = datatype_size(tensor->storage.datatype);
 	size_t elements = 1;
 
-	for (int i = 0; i < tensor->dimensions; i++)
-		elements *= tensor->shape[i];
+	for (int i = 0; i < tensor->shape_dimensions; i++)
+		elements *= tensor->shape[i].size;
 
 	return apply_padding(elements * element_size);
 }
 
-tensor_t* init_tensor(int dimensions, int shape[], char* datatype) {
-	tensor_t* tensor = malloc(sizeof(tensor_t) + sizeof(int)*dimensions);
+static void default_stride(tensor_t* tensor) {
+	size_t stride = 1;
 
-	tensor->dimensions = dimensions;
+	for (int i = tensor->shape_dimensions - 1; i >= 0; i--) {
+		tensor->shape[i].stride = stride;
+		stride *= tensor->shape[i].size;
+	}
+}
+
+tensor_t* init_tensor(int shape_dimensions, size_t shape[], char* datatype) {
+	tensor_t* tensor = malloc(sizeof(tensor_t) + sizeof(shape_dimension_t)*shape_dimensions);
+	tensor->shape_dimensions = shape_dimensions;
 	
-	for (int i = 0; i < dimensions; i++) {
-		tensor->shape[i] = shape[i];
+	for (int i = 0; i < shape_dimensions; i++) {
+		tensor->shape[i] = (shape_dimension_t){ .size = shape[i], .stride = 0 };
 		assert(shape[i] > 0);
 	}
+
+	default_stride(tensor);
 
 	tensor->storage.datatype = datatype;
 	tensor->storage.size = tensor_size(tensor);
@@ -49,8 +59,8 @@ tensor_t* init_tensor(int dimensions, int shape[], char* datatype) {
 void debug_tensor(tensor_t* tensor) {
 	printf("tensor(Shape(");
 
-	for (int i = 0; i < tensor->dimensions; i++)
-		printf("%d%s", tensor->shape[i], tensor->dimensions - i > 1 ? ", " : "");
+	for (int i = 0; i < tensor->shape_dimensions; i++)
+		printf("%zu%s", tensor->shape[i].size, tensor->shape_dimensions - i > 1 ? ", " : "");
 
 	printf("), \"%s\")\n", tensor->storage.datatype);
 }
