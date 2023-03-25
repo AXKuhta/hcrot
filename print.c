@@ -9,18 +9,6 @@
 
 #define H_ELEMENT_MAX 6
 
-static size_t braces(size_t index, const tensor_t* tensor) {
-	size_t stride = 1;
-	size_t count = 0;
-
-	for (int i = tensor->shape_dimensions - 1; i >= 0; i--) {
-		stride *= tensor->shape[i].size;
-		count += 0 == index % stride;
-	}
-
-	return count;
-}
-
 static void print_f32(const tensor_t* tensor) {
 	const size_t shape_dimensions = tensor->shape_dimensions;
 
@@ -31,10 +19,15 @@ static void print_f32(const tensor_t* tensor) {
 
 	printf("), \"%s\")\n", tensor->storage.datatype);
 
+	size_t* counters_reload = malloc(shape_dimensions*sizeof(size_t));
+	size_t* counters = malloc(shape_dimensions*sizeof(size_t));
 	size_t elements = 1;
 
-	for (int i = shape_dimensions - 1; i >= 0; i--)
+	for (int i = shape_dimensions - 1; i >= 0; i--) {
 		elements *= tensor->shape[i].size;
+		counters_reload[i] = elements;
+		counters[i] = 0;
+	}
 
 	char* level_enter = malloc(shape_dimensions + 1);
 	char* level_leave = malloc(shape_dimensions + 1);
@@ -53,8 +46,14 @@ static void print_f32(const tensor_t* tensor) {
 	size_t h_elements = 0;
 
 	for (size_t i = 0; i < elements; i++) {
-		const size_t braces_open = braces(i, tensor);
-		const size_t braces_close = braces(i + 1, tensor);
+		size_t braces_open = 0;
+		size_t braces_close = 0;
+
+		for (size_t j = 0; j < shape_dimensions; j++) {
+			braces_open += counters[j] == 0;
+			braces_close += 1+counters[j] == counters_reload[j];
+			counters[j] = 1+counters[j] == counters_reload[j] ? 0 : counters[j] + 1;
+		}
 
 		const char* pad = 0 == h_elements % H_ELEMENT_MAX ? level_pad + braces_open : "";
 		const char* prefix = level_enter + shape_dimensions - braces_open;
@@ -74,6 +73,8 @@ static void print_f32(const tensor_t* tensor) {
 	free(level_enter);
 	free(level_leave);
 	free(level_pad);
+	free(counters);
+	free(counters_reload);
 }
 
 void print_tensor(const tensor_t* tensor) {
