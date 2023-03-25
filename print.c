@@ -55,16 +55,24 @@ static void print_f32(const tensor_t* tensor) {
 			counters[j] = 1+counters[j] == counters_reload[j] ? 0 : counters[j] + 1;
 		}
 
-		const char* pad = 0 == h_elements % H_ELEMENT_MAX ? level_pad + braces_open : "";
+		h_elements++;
+
+		if (h_elements >= H_ELEMENT_MAX) {
+			if (h_elements == H_ELEMENT_MAX)
+				printf("..., ");
+
+			if (braces_close == 0)
+				continue;
+		}
+
+		const char* pad = 1 == h_elements ? level_pad + braces_open : "";
 		const char* prefix = level_enter + shape_dimensions - braces_open;
 		const char* separator = elements - i > 1 ? ", " : "";
 		const char* postfix = level_leave + shape_dimensions - braces_close;
 
 		printf("%s%s%.4f%s%s", pad, prefix, data[i], postfix, separator);
 
-		h_elements++;
-
-		if (0 == h_elements % H_ELEMENT_MAX || braces_close > 0) {
+		if (braces_close > 0) {
 			h_elements = 0;
 			printf("\n");
 		}
