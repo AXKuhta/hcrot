@@ -22,4 +22,3 @@ typedef struct tensor_t {
 
 tensor_t* init_tensor(int shape_dimensions, size_t shape[], char* datatype);
 void free_tensor(tensor_t* tensor);
-void debug_tensor(tensor_t* tensor);

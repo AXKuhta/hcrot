@@ -60,12 +60,3 @@ void free_tensor(tensor_t* tensor) {
 	free(tensor->storage.memory);
 	free(tensor);
 }
-
-void debug_tensor(tensor_t* tensor) {
-	printf("tensor(Shape(");
-
-	for (int i = 0; i < tensor->shape_dimensions; i++)
-		printf("%zu%s", tensor->shape[i].size, tensor->shape_dimensions - i > 1 ? ", " : "");
-
-	printf("), \"%s\")\n", tensor->storage.datatype);
-}

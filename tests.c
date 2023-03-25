@@ -15,6 +15,21 @@ void test_set_get() {
 		assert(get_f32(x, Index(i)) == i);
 }
 
+void test_print_1() {
+	tensor_t* x = init_tensor(Shape(4), "f32");
+	print_tensor(x);
+}
+
+void test_print_2() {
+	tensor_t* x = init_tensor(Shape(4, 4), "f32");
+	print_tensor(x);
+}
+
+void test_print_3() {
+	tensor_t* x = init_tensor(Shape(16, 4, 10), "f32");
+	print_tensor(x);
+}
+
 void set_get() {
 	tensor_t* x = init_tensor(Shape(16, 3, 320, 240), "f32");
 
@@ -51,6 +66,9 @@ void benchmark(const char* identifier, void fn(void)) {
 
 void run_tests() {
 	test_set_get();
+	test_print_1();
+	test_print_2();
+	test_print_3();
 }
 
 void run_benchmarks() {
@@ -62,7 +80,7 @@ int main() {
 
 	printf("Self-testing OK\n");
 
-	run_benchmarks();
+	//run_benchmarks();
 
 	return 0;
 }
