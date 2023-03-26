@@ -60,9 +60,29 @@ void test_set_get_2() {
 	free_tensor(x);
 }
 
+void test_dot_1() {
+	tensor_t* a = zeros_tensor(Shape(5), "f32");
+	tensor_t* b = zeros_tensor(Shape(5), "f32");
+
+	set_f32(a, Index(0), 6);
+	set_f32(a, Index(1), 9);
+	set_f32(a, Index(2), 9);
+	set_f32(a, Index(3), 8);
+	set_f32(a, Index(4), 6);
+
+	set_f32(b, Index(0), 2);
+	set_f32(b, Index(1), 2);
+	set_f32(b, Index(2), 3);
+	set_f32(b, Index(3), 4);
+	set_f32(b, Index(4), 5);
+
+	assert(dot_f32(a, b) == 119.0);
+}
+
 void run_tests() {
 	test_set_get_1();
 	test_set_get_2();
+	test_dot_1();
 }
 
 int main() {

@@ -37,3 +37,12 @@ void add_inplace(tensor_t* a, tensor_t* b) {
 	}
 }
 
+f32 dot_f32(tensor_t* a, tensor_t* b) {
+	assert(no_overlap(a, b));
+	assert(same_size(a, b));
+
+	if (f32_tensor(a) && f32_tensor(b))
+		return dot_f32_f32((f32*)a->storage.memory, (f32*)b->storage.memory, a->storage.size);
+
+	return 0.0;
+}
