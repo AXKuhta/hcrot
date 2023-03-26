@@ -1,36 +1,10 @@
 #include <stddef.h>
 #include <assert.h>
 #include <stdio.h>
-#include <time.h>
 
 #include "api.h"
 
-void test_set_get() {
-	tensor_t* x = zeros_tensor(Shape(4), "f32");
-
-	for (int i = 0; i < 4; i++)
-		set_f32(x, Index(i), i);
-
-	for (int i = 0; i < 4; i++)
-		assert(get_f32(x, Index(i)) == i);
-}
-
-void test_print_1() {
-	tensor_t* x = rand_tensor(Shape(4), "f32");
-	print_tensor(x);
-}
-
-void test_print_2() {
-	tensor_t* x = rand_tensor(Shape(4, 4), "f32");
-	print_tensor(x);
-}
-
-void test_print_3() {
-	tensor_t* x = rand_tensor(Shape(16, 4, 10), "f32");
-	print_tensor(x);
-}
-
-void set_get() {
+void test_set_get_1() {
 	tensor_t* x = zeros_tensor(Shape(16, 3, 320, 240), "f32");
 
 	for (int i = 0; i < 16; i++)
@@ -49,38 +23,52 @@ void set_get() {
 	free_tensor(x);
 }
 
-void benchmark(const char* identifier, void fn(void)) {
-	double start = clock();
-
-	for (int i = 0; i < 100; i++) {
-		fn();
-	}
+void test_set_get_2() {
+	tensor_t* x = zeros_tensor(Shape(3, 3), "f32");
 	
-	double end = clock();
-	double clock_per_iter = (end - start) / 100.0;
+	set_f32(x, Index(0, 0), 8);
+	set_f32(x, Index(0, 1), 1);
+	set_f32(x, Index(0, 2), 5);
 
-	printf("%s: %.1lf\n", identifier, clock_per_iter);
+	set_f32(x, Index(1, 0), 2);
+	set_f32(x, Index(1, 1), 9);
+	set_f32(x, Index(1, 2), 7);
+
+	set_f32(x, Index(2, 0), 2);
+	set_f32(x, Index(2, 1), 4);
+	set_f32(x, Index(2, 2), 6);
+
+	f32 det = 0.0;
+
+	for (size_t i = 0; i < 3; i++) {
+		f32 pri_diag = 1.0;
+		f32 sec_diag = 1.0;
+
+		for (size_t j = 0; j < 3; j++) {
+			size_t c = j;
+			size_t r = (j + i) % 3;
+			
+			pri_diag *= get_f32(x, Index(r, c));
+			sec_diag *= get_f32(x, Index(r, 2 - c));
+		}
+
+		det += pri_diag - sec_diag;
+	}
+
+	assert(det == 160.0);
+
+	free_tensor(x);
 }
-
-#define bench(X) benchmark(#X, X)
 
 void run_tests() {
-	test_set_get();
-	test_print_1();
-	test_print_2();
-	test_print_3();
-}
-
-void run_benchmarks() {
-	bench(set_get);
+	test_set_get_1();
+	test_set_get_2();
 }
 
 int main() {
 	run_tests();
 
 	printf("Self-testing OK\n");
-
-	//run_benchmarks();
 
 	return 0;
 }
