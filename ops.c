@@ -38,6 +38,7 @@ void add_inplace(tensor_t* a, tensor_t* b) {
 }
 
 f32 dot_f32(tensor_t* a, tensor_t* b) {
+	assert(a->shape_dimensions == 1 && b->shape_dimensions == 1);
 	assert(no_overlap(a, b));
 	assert(same_size(a, b));
 
