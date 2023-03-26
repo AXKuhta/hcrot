@@ -1,4 +1,4 @@
-CC = gcc -O2 -ftree-vectorize -march=sandybridge -Wall -Wextra -Wpedantic -Wvla -I"include/"
+CC = gcc -O2 -ftree-vectorize -Wall -Wextra -Wpedantic -Wvla -I"include/"
 
 all: tests.exe bench.exe
 
