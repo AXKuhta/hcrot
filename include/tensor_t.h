@@ -20,5 +20,8 @@ typedef struct tensor_t {
 #define Shape(...) (sizeof((size_t[]){__VA_ARGS__}) / sizeof(size_t)), ((size_t[]){__VA_ARGS__})
 #define Index(...) Shape(__VA_ARGS__)
 
-tensor_t* init_tensor(int shape_dimensions, size_t shape[], char* datatype);
+tensor_t* zeros_tensor(int shape_dimensions, size_t shape[], char* datatype);
+tensor_t* ones_tensor(int shape_dimensions, size_t shape[], char* datatype);
+tensor_t* rand_tensor(int shape_dimensions, size_t shape[], char* datatype);
+
 void free_tensor(tensor_t* tensor);

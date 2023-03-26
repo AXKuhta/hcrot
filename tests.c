@@ -6,7 +6,7 @@
 #include "api.h"
 
 void test_set_get() {
-	tensor_t* x = init_tensor(Shape(4), "f32");
+	tensor_t* x = zeros_tensor(Shape(4), "f32");
 
 	for (int i = 0; i < 4; i++)
 		set_f32(x, Index(i), i);
@@ -16,22 +16,22 @@ void test_set_get() {
 }
 
 void test_print_1() {
-	tensor_t* x = init_tensor(Shape(4), "f32");
+	tensor_t* x = rand_tensor(Shape(4), "f32");
 	print_tensor(x);
 }
 
 void test_print_2() {
-	tensor_t* x = init_tensor(Shape(4, 4), "f32");
+	tensor_t* x = rand_tensor(Shape(4, 4), "f32");
 	print_tensor(x);
 }
 
 void test_print_3() {
-	tensor_t* x = init_tensor(Shape(16, 4, 10), "f32");
+	tensor_t* x = rand_tensor(Shape(16, 4, 10), "f32");
 	print_tensor(x);
 }
 
 void set_get() {
-	tensor_t* x = init_tensor(Shape(16, 3, 320, 240), "f32");
+	tensor_t* x = zeros_tensor(Shape(16, 3, 320, 240), "f32");
 
 	for (int i = 0; i < 16; i++)
 		for (int j = 0; j < 3; j++)
