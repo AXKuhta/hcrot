@@ -8,7 +8,7 @@ bench.exe: bench.o lib.a
 
 %.a: 
 	@echo " [AR]" $@
-	@ar rcs $@ $^
+	@gcc-ar rcs $@ $^
 
 # All linkage
 %.exe:
