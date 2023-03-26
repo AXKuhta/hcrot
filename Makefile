@@ -1,8 +1,14 @@
 CC = gcc -O2 -Wall -Wextra -Wpedantic -Wvla -I"include/"
 
-all: tests.exe
+all: tests.exe bench.exe
 
-tests.exe: simd/f32.o tensor.o print.o index.o ops.o tests.o
+lib.a: simd/f32.o tensor.o print.o index.o ops.o
+tests.exe: tests.o lib.a
+bench.exe: bench.o lib.a
+
+%.a: 
+	@echo " [AR]" $@
+	@ar rcs $@ $^
 
 # All linkage
 %.exe:
@@ -15,4 +21,4 @@ tests.exe: simd/f32.o tensor.o print.o index.o ops.o tests.o
 	@$(CC) -c -o $@ $<
 
 clean:
-	rm -f *.o *.exe
+	rm -f *.o *.a *.exe

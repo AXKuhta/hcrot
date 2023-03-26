@@ -83,12 +83,10 @@ void run_tests() {
 	test_set_get_1();
 	test_set_get_2();
 	test_dot_1();
+
+	printf("Self-testing OK\n");
 }
 
 int main() {
 	run_tests();
-
-	printf("Self-testing OK\n");
-
-	return 0;
 }

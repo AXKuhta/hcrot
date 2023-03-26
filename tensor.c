@@ -26,7 +26,7 @@ static size_t datatype_size(const char* datatype) {
 }
 
 static size_t apply_padding(size_t size) {
-	return size + size % (16 * 4);
+	return size + (-size % K_STRIDE);
 }
 
 static size_t tensor_storage_size(const tensor_t* tensor) {

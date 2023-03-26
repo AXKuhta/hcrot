@@ -17,7 +17,9 @@ static int strides_cleanly(const size_t size) {
 void f32_add_f32(f32* restrict a, f32* restrict b, const size_t size) {
 	assert(strides_cleanly(size));
 
-	for (size_t i = 0; i < size; i += K_STRIDE_F32) {
+	size_t elements = size / sizeof(f32);
+
+	for (size_t i = 0; i < elements; i += K_STRIDE_F32) {
 		for (size_t j = 0; j < K_STRIDE_F32; j++) {
 			a[i + j] += b[i + j];
 		}
@@ -25,9 +27,12 @@ void f32_add_f32(f32* restrict a, f32* restrict b, const size_t size) {
 }
 
 f32 dot_f32_f32(f32* restrict a, f32* restrict b, const size_t size) {
+	assert(strides_cleanly(size));
+
+	size_t elements = size / sizeof(f32);
 	f32 acc = 0.0;
 
-	for (size_t i = 0; i < size; i += K_STRIDE_F32) {
+	for (size_t i = 0; i < elements; i += K_STRIDE_F32) {
 		for (size_t j = 0; j < K_STRIDE_F32; j++) {
 			acc += a[i + j] * b[i + j];
 		}
