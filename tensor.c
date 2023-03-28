@@ -3,115 +3,90 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "tensor_t.h"
 #include "simd.h"
+#include "tensor_t.h"
 
-static size_t tensor_element_count(const tensor_t* tensor) {
-	size_t elements = 1;
-
-	for (int i = 0; i < tensor->shape_dimensions; i++)
-		elements *= tensor->shape[i].size;
-
-	return elements;
-}
-
-static size_t datatype_size(const char* datatype) {
-	if (strcmp(datatype, "f32") == 0) { return 4; }
-	else if (strcmp(datatype, "i32") == 0) { return 4; }
-	else {
-		printf("Unknown datatype: [%s]\n", datatype);
-		exit(-1);
-		return 0;
-	}
-}
-
-static size_t apply_padding(size_t size) {
-	return size + (-size % K_STRIDE);
-}
-
-static size_t tensor_storage_size(const tensor_t* tensor) {
-	size_t element_size = datatype_size(tensor->storage.datatype);
-	size_t elements = tensor_element_count(tensor);
-
-	return apply_padding(elements * element_size);
-}
-
-static void default_stride(tensor_t* tensor) {
+static void default_stride(tensor_shape_t* shape) {
 	size_t stride = 1;
 
-	for (int i = tensor->shape_dimensions - 1; i >= 0; i--) {
-		tensor->shape[i].stride = stride;
-		stride *= tensor->shape[i].size;
+	for (int i = shape->dimensions - 1; i >= 0; i--) {
+		shape->arr[i].stride = stride;
+		stride *= shape->arr[i].size;
 	}
 }
 
-static tensor_t* alloc_tensor(int shape_dimensions, size_t shape[], char* datatype) {
-	tensor_t* tensor = malloc(sizeof(tensor_t) + sizeof(shape_dimension_t)*shape_dimensions);
-	tensor->shape_dimensions = shape_dimensions;
-	
-	for (int i = 0; i < shape_dimensions; i++) {
-		tensor->shape[i] = (shape_dimension_t){ .size = shape[i], .stride = 0 };
+void_tensor* _alloc_tensor(size_t shape_dimensions, size_t shape[]) {
+	void_tensor* tensor = malloc(sizeof(void_tensor) + sizeof(shape_arr_t)*shape_dimensions);
+	tensor->shape.dimensions = shape_dimensions;
+	size_t elements = 1;
+
+	for (size_t i = 0; i < shape_dimensions; i++) {
+		tensor->shape.arr[i] = (shape_arr_t){
+			.size = shape[i],
+			.stride = 0
+		};
+
+		elements *= shape[i];
 		assert(shape[i] > 0);
 	}
 
-	default_stride(tensor);
-
-	tensor->storage.datatype = datatype;
-	tensor->storage.size = tensor_storage_size(tensor);
-	tensor->storage.memory = malloc(tensor->storage.size);
+	tensor->shape.elements = elements;
+	default_stride(&tensor->shape);
 
 	return tensor;
 }
 
-tensor_t* zeros_tensor(int shape_dimensions, size_t shape[], char* datatype) {
-	tensor_t* tensor = alloc_tensor(shape_dimensions, shape, datatype);
+// ============================================================================
+// f32_tensor
+// ============================================================================
 
-	memset(tensor->storage.memory, 0, tensor->storage.size);
-
-	return tensor;
-}
-
-tensor_t* ones_tensor(int shape_dimensions, size_t shape[], char* datatype) {
-	tensor_t* tensor = alloc_tensor(shape_dimensions, shape, datatype);
-	size_t elements = tensor_element_count(tensor);
-
-	if (strcmp(datatype, "f32") == 0) {
-		f32* data = (f32*)tensor->storage.memory;
-
-		for (size_t i = 0; i < elements; i++)
-			data[i] = 1.0;
-
-	} else if (strcmp(datatype, "i32") == 0) {
-		i32* data = (i32*)tensor->storage.memory;
-
-		for (size_t i = 0; i < elements; i++)
-			data[i] = 1;
-	}
+f32_tensor* zeros_init_f32_tensor(f32_tensor* tensor) {
+	for (size_t i = 0, elements = tensor->shape.elements; i < elements; i++)
+		tensor->storage[i] = 0.0;
 
 	return tensor;
 }
 
-tensor_t* rand_tensor(int shape_dimensions, size_t shape[], char* datatype) {
-	tensor_t* tensor = alloc_tensor(shape_dimensions, shape, datatype);
-	size_t elements = tensor_element_count(tensor);
-
-	if (strcmp(datatype, "f32") == 0) {
-		f32* data = (f32*)tensor->storage.memory;
-
-		for (size_t i = 0; i < elements; i++)
-			data[i] = (double)rand() / (double)RAND_MAX;
-
-	} else if (strcmp(datatype, "i32") == 0) {
-		i32* data = (i32*)tensor->storage.memory;
-
-		for (size_t i = 0; i < elements; i++)
-			data[i] = rand();
-	}
+f32_tensor* ones_init_f32_tensor(f32_tensor* tensor) {
+	for (size_t i = 0, elements = tensor->shape.elements; i < elements; i++)
+		tensor->storage[i] = 1.0;
 
 	return tensor;
 }
 
-void free_tensor(tensor_t* tensor) {
-	free(tensor->storage.memory);
+f32_tensor* rand_init_f32_tensor(f32_tensor* tensor) {
+	for (size_t i = 0, elements = tensor->shape.elements; i < elements; i++)
+		tensor->storage[i] = (double)rand() / (double)RAND_MAX;
+
+	return tensor;
+}
+
+// ============================================================================
+// i32_tensor
+// ============================================================================
+
+i32_tensor* zeros_init_i32_tensor(i32_tensor* tensor) {
+	for (size_t i = 0, elements = tensor->shape.elements; i < elements; i++)
+		tensor->storage[i] = 0;
+
+	return tensor;
+}
+
+i32_tensor* ones_init_i32_tensor(i32_tensor* tensor) {
+	for (size_t i = 0, elements = tensor->shape.elements; i < elements; i++)
+		tensor->storage[i] = 1;
+
+	return tensor;
+}
+
+i32_tensor* rand_init_i32_tensor(i32_tensor* tensor) {
+	for (size_t i = 0, elements = tensor->shape.elements; i < elements; i++)
+		tensor->storage[i] = rand();
+
+	return tensor;
+}
+
+void free_tensor(void* tensor) {
+	free(((void_tensor*)tensor)->storage);
 	free(tensor);
 }
