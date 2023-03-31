@@ -45,6 +45,10 @@ static double bench_inplace_mul(size_t trials) {
 	tensor_t* a = rand_tensor(f32, 50277);
 	tensor_t* b = rand_tensor(f32, 50277);
 
+	// https://stackoverflow.com/questions/53507874/intel-simd-why-is-inplace-multiplication-so-slow
+	tensor_t* ones = ones_tensor(f32, 50277);
+	tensor_f32_add_f32(b, ones);
+
 	uint64_t start = nanoseconds();
 
 	for (size_t i = 0; i < trials; i++)
