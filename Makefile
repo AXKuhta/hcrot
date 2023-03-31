@@ -1,11 +1,11 @@
 CC = gcc -O2 -ftree-vectorize -Wall -Wextra -Wpedantic -Wvla -I"include/"
 
-all: lib.a tests.exe
+all: lib.a tests.exe bench.exe
 
 lib.a: simd/f32.o tensor.o print.o ops.o
 
 tests.exe: tests.o lib.a
-#bench.exe: bench.o lib.a
+bench.exe: bench.o lib.a
 
 %.a: 
 	@echo " [AR]" $@

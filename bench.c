@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <assert.h>
@@ -13,13 +14,13 @@ static uint64_t nanoseconds() {
 }
 
 static double bench_inplace_add(size_t trials) {
-	tensor_t* a = rand_tensor(Shape(50277), "f32");
-	tensor_t* b = rand_tensor(Shape(50277), "f32");
+	tensor_t* a = rand_tensor(f32, 50277);
+	tensor_t* b = rand_tensor(f32, 50277);
 
 	uint64_t start = nanoseconds();
 
 	for (size_t i = 0; i < trials; i++)
-		add_inplace(a, b);
+		tensor_f32_add_f32(a, b);
 
 	uint64_t elapsed = nanoseconds() - start;
 
@@ -27,15 +28,15 @@ static double bench_inplace_add(size_t trials) {
 }
 
 static double bench_dot(size_t trials) {
-	tensor_t* a = rand_tensor(Shape(50277), "f32");
-	tensor_t* b = rand_tensor(Shape(50277), "f32");
+	tensor_t* a = rand_tensor(f32, 50277);
+	tensor_t* b = rand_tensor(f32, 50277);
 
 	f32 acc = 0.0;
 
 	uint64_t start = nanoseconds();
 
 	for (size_t i = 0; i < trials; i++)
-		acc += dot_f32(a, b);
+		acc += tensor_dot_f32(a, b);
 
 	uint64_t elapsed = nanoseconds() - start;
 
