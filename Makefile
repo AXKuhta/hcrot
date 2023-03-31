@@ -1,12 +1,9 @@
-CC = gcc -O2 -ftree-vectorize -Wall -Wextra -Wvla -I"include/"
+CC = gcc -O2 -ftree-vectorize -Wall -Wextra -Wpedantic -Wvla -I"include/"
 
 all: lib.a tests.exe
 
-lib.a: simd/f32.o tensor.o ops.o
+lib.a: simd/f32.o tensor.o print.o ops.o
 
-#all: tests.exe bench.exe
-
-#lib.a: simd/f32.o tensor.o print.o index.o ops.o
 tests.exe: tests.o lib.a
 #bench.exe: bench.o lib.a
 
