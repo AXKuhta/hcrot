@@ -6,87 +6,83 @@
 #include "simd.h"
 #include "tensor_t.h"
 
-static void default_stride(tensor_shape_t* shape) {
+static void default_stride(tensor_t* tensor) {
 	size_t stride = 1;
 
-	for (int i = shape->dimensions - 1; i >= 0; i--) {
-		shape->arr[i].stride = stride;
-		stride *= shape->arr[i].size;
+	for (int i = tensor->dimensions - 1; i >= 0; i--) {
+		tensor->shape[i].stride = stride;
+		stride *= tensor->shape[i].size;
 	}
 }
 
-void_tensor* _alloc_tensor(size_t shape_dimensions, size_t shape[]) {
-	void_tensor* tensor = malloc(sizeof(void_tensor) + sizeof(shape_arr_t)*shape_dimensions);
-	tensor->shape.dimensions = shape_dimensions;
+tensor_t* alloc_tensor(size_t shape_dimensions, size_t shape[]) {
+	tensor_t* tensor = malloc(sizeof(tensor_t) + sizeof(size_t)*2*shape_dimensions);
+	tensor->dimensions = shape_dimensions;
 	size_t elements = 1;
 
 	for (size_t i = 0; i < shape_dimensions; i++) {
-		tensor->shape.arr[i] = (shape_arr_t){
-			.size = shape[i],
-			.stride = 0
-		};
-
-		elements *= shape[i];
 		assert(shape[i] > 0);
+		elements *= shape[i];
+		tensor->shape[i].size = shape[i];
 	}
 
-	tensor->shape.elements = elements;
-	default_stride(&tensor->shape);
+	tensor->elements = elements;
+	default_stride(tensor);
 
 	return tensor;
 }
 
 // ============================================================================
-// f32_tensor
+// f32
 // ============================================================================
 
-f32_tensor* zeros_init_f32_tensor(f32_tensor* tensor) {
-	for (size_t i = 0, elements = tensor->shape.elements; i < elements; i++)
-		tensor->storage[i] = 0.0;
+tensor_t* zeros_init_f32_tensor(tensor_t* tensor) {
+	for (size_t i = 0, elements = tensor->elements; i < elements; i++)
+		tensor->storage.f32[i] = 0.0;
 
 	return tensor;
 }
 
-f32_tensor* ones_init_f32_tensor(f32_tensor* tensor) {
-	for (size_t i = 0, elements = tensor->shape.elements; i < elements; i++)
-		tensor->storage[i] = 1.0;
+tensor_t* ones_init_f32_tensor(tensor_t* tensor) {
+	for (size_t i = 0, elements = tensor->elements; i < elements; i++)
+		tensor->storage.f32[i] = 1.0;
 
 	return tensor;
 }
 
-f32_tensor* rand_init_f32_tensor(f32_tensor* tensor) {
-	for (size_t i = 0, elements = tensor->shape.elements; i < elements; i++)
-		tensor->storage[i] = (double)rand() / (double)RAND_MAX;
+tensor_t* rand_init_f32_tensor(tensor_t* tensor) {
+	for (size_t i = 0, elements = tensor->elements; i < elements; i++)
+		tensor->storage.f32[i] = (double)rand() / (double)RAND_MAX;
 
 	return tensor;
 }
 
 // ============================================================================
-// i32_tensor
+// i32
 // ============================================================================
 
-i32_tensor* zeros_init_i32_tensor(i32_tensor* tensor) {
-	for (size_t i = 0, elements = tensor->shape.elements; i < elements; i++)
-		tensor->storage[i] = 0;
+tensor_t* zeros_init_i32_tensor(tensor_t* tensor) {
+	for (size_t i = 0, elements = tensor->elements; i < elements; i++)
+		tensor->storage.i32[i] = 0;
 
 	return tensor;
 }
 
-i32_tensor* ones_init_i32_tensor(i32_tensor* tensor) {
-	for (size_t i = 0, elements = tensor->shape.elements; i < elements; i++)
-		tensor->storage[i] = 1;
+tensor_t* ones_init_i32_tensor(tensor_t* tensor) {
+	for (size_t i = 0, elements = tensor->elements; i < elements; i++)
+		tensor->storage.i32[i] = 1;
 
 	return tensor;
 }
 
-i32_tensor* rand_init_i32_tensor(i32_tensor* tensor) {
-	for (size_t i = 0, elements = tensor->shape.elements; i < elements; i++)
-		tensor->storage[i] = rand();
+tensor_t* rand_init_i32_tensor(tensor_t* tensor) {
+	for (size_t i = 0, elements = tensor->elements; i < elements; i++)
+		tensor->storage.i32[i] = rand();
 
 	return tensor;
 }
 
-void free_tensor(void* tensor) {
-	free(((void_tensor*)tensor)->storage);
+void free_tensor(tensor_t* tensor) {
+	free(tensor->storage.memory);
 	free(tensor);
 }

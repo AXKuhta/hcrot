@@ -11,27 +11,22 @@
 // TENSOR STRUCTURE
 // ============================================================================
 
-typedef struct shape_arr_t {
-	size_t size;
-	size_t stride;
-} shape_arr_t;
+typedef struct tensor_t {
+	union {
+		void* memory;
+		f32* f32;
+		i32* i32;
+	} storage;
 
-typedef struct tensor_shape_t {
+	size_t storage_size;
 	size_t elements;
 	size_t dimensions;
-	shape_arr_t arr[];
-} tensor_shape_t;
 
-#define DEFINE_TENSOR(T) \
-typedef struct T##_tensor { \
-	T* storage; \
-	size_t storage_size; \
-	tensor_shape_t shape; \
-} T##_tensor;
-
-DEFINE_TENSOR(void)
-DEFINE_TENSOR(f32)
-DEFINE_TENSOR(i32)
+	struct {
+		size_t size;
+		size_t stride;
+	} shape[];
+} tensor_t;
 
 // ============================================================================
 // TENSOR CREATION
@@ -43,49 +38,48 @@ static size_t apply_padding(size_t size) {
 
 // Size annotations for compiler to warn you if you go out of bounds
 // At least on static indices
-static void* alloc_storage(size_t element_size, void_tensor* tensor) {
-	tensor->storage_size = apply_padding(element_size * tensor->shape.elements);
-	tensor->storage = malloc(tensor->storage_size);
+static tensor_t __unused * alloc_storage(size_t element_size, tensor_t* tensor) {
+	tensor->storage_size = apply_padding(element_size * tensor->elements);
+	tensor->storage.memory = malloc(tensor->storage_size);
 
 	return tensor;
 }
 
-#define alloc_tensor(datatype, ...) alloc_storage(sizeof(datatype), _alloc_tensor(Shape(__VA_ARGS__)))
-#define zeros_tensor(datatype, ...) zeros_init_##datatype##_tensor(alloc_tensor(datatype, __VA_ARGS__))
-#define ones_tensor(datatype, ...) ones_init_##datatype##_tensor(alloc_tensor(datatype, __VA_ARGS__))
-#define rand_tensor(datatype, ...) rand_init_##datatype##_tensor(alloc_tensor(datatype, __VA_ARGS__))
+#define zeros_tensor(datatype, ...) zeros_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(Shape(__VA_ARGS__))))
+#define ones_tensor(datatype, ...) ones_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(Shape(__VA_ARGS__))))
+#define rand_tensor(datatype, ...) rand_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(Shape(__VA_ARGS__))))
 
 // ============================================================================
 // PROTOTYPES
 // ============================================================================
 
-void_tensor* _alloc_tensor(size_t shape_dimensions, size_t shape[]);
+tensor_t* alloc_tensor(size_t shape_dimensions, size_t shape[]);
 
-f32_tensor* zeros_init_f32_tensor(f32_tensor* tensor);
-f32_tensor* ones_init_f32_tensor(f32_tensor* tensor);
-f32_tensor* rand_init_f32_tensor(f32_tensor* tensor);
+tensor_t* zeros_init_f32_tensor(tensor_t* tensor);
+tensor_t* ones_init_f32_tensor(tensor_t* tensor);
+tensor_t* rand_init_f32_tensor(tensor_t* tensor);
 
-i32_tensor* zeros_init_i32_tensor(i32_tensor* tensor);
-i32_tensor* ones_init_i32_tensor(i32_tensor* tensor);
-i32_tensor* rand_init_i32_tensor(i32_tensor* tensor);
+tensor_t* zeros_init_i32_tensor(tensor_t* tensor);
+tensor_t* ones_init_i32_tensor(tensor_t* tensor);
+tensor_t* rand_init_i32_tensor(tensor_t* tensor);
 
-void free_tensor(void* tensor);
+void free_tensor(tensor_t* tensor);
 
 // ============================================================================
 // INDEXING
 // ============================================================================
 
-static size_t linear_index(const tensor_shape_t* shape, size_t index_dimensions, size_t index[]) {
-	assert(shape->dimensions == index_dimensions);
+static size_t __unused linear_index(const tensor_t* tensor, size_t index_dimensions, size_t index[]) {
+	assert(tensor->dimensions >= index_dimensions);
 
-	size_t offset = shape->dimensions - index_dimensions;
+	size_t offset = tensor->dimensions - index_dimensions;
 	size_t linear_index = 0;
 
 	for (size_t i = 0; i < index_dimensions; i++) {
-		linear_index += index[i] * shape->arr[i + offset].stride;
+		linear_index += index[i] * tensor->shape[i + offset].stride;
 	}
 
 	return linear_index;
 }
 
-#define idx(x, ...) *(x->storage + linear_index(&x->shape, Index(__VA_ARGS__)))
+#define rw(datatype, x, ...) *(x->storage.datatype + linear_index(x, Index(__VA_ARGS__)))

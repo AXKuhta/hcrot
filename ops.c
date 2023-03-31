@@ -1,9 +1,10 @@
 #include <stddef.h>
+#include <stdlib.h>
 #include <assert.h>
 #include <string.h>
 
-#include "tensor_t.h"
 #include "simd.h"
+#include "tensor_t.h"
 #include "ops.h"
 
 // Beware of pointer lt/gt comparison undefined behavior 
@@ -12,38 +13,20 @@ static int no_overlap(tensor_t* a, tensor_t* b) {
 }
 
 static int same_size(tensor_t* a, tensor_t* b) {
-	return a->storage.size == b->storage.size;
+	return a->storage_size == b->storage_size;
 }
 
-static int f32_tensor(tensor_t* a) {
-	return 0 == strcmp(a->storage.datatype, "f32");
-}
-
-static int i32_tensor(tensor_t* a) {
-	return 0 == strcmp(a->storage.datatype, "i32");
-}
-
-void add_inplace(tensor_t* a, tensor_t* b) {
+void tensor_f32_add_f32(tensor_t* a, tensor_t* b) {
 	assert(no_overlap(a, b));
 	assert(same_size(a, b));
 
-	if (f32_tensor(a) && f32_tensor(b)) {
-		f32_add_f32((f32*)a->storage.memory, (f32*)b->storage.memory, a->storage.size);
-		return;
-	}
-
-	if (i32_tensor(a) && i32_tensor(b)) {
-		return;
-	}
+	f32_add_f32(a->storage.f32, b->storage.f32, a->storage_size);
 }
 
-f32 dot_f32(tensor_t* a, tensor_t* b) {
-	assert(a->shape_dimensions == 1 && b->shape_dimensions == 1);
+f32 tensor_dot_f32(tensor_t* a, tensor_t* b) {
+	assert(a->dimensions == 1 && b->dimensions == 1);
 	assert(no_overlap(a, b));
 	assert(same_size(a, b));
 
-	if (f32_tensor(a) && f32_tensor(b))
-		return dot_f32_f32((f32*)a->storage.memory, (f32*)b->storage.memory, a->storage.size);
-
-	return 0.0;
+	return dot_f32_f32(a->storage.f32, b->storage.f32, a->storage_size);
 }
