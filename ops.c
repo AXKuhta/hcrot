@@ -16,12 +16,17 @@ static int same_size(tensor_t* a, tensor_t* b) {
 	return a->storage_size == b->storage_size;
 }
 
-void tensor_f32_add_f32(tensor_t* a, tensor_t* b) {
+static void tensor_f32_x_f32(tensor_t* a, tensor_t* b, void fn(f32* a, f32* b, const size_t size)) {
 	assert(no_overlap(a, b));
 	assert(same_size(a, b));
 
-	f32_add_f32(a->storage.f32, b->storage.f32, a->storage_size);
+	fn(a->storage.f32, b->storage.f32, a->storage_size);
 }
+
+void tensor_f32_add_f32(tensor_t* a, tensor_t* b) { tensor_f32_x_f32(a, b, f32_add_f32); }
+void tensor_f32_sub_f32(tensor_t* a, tensor_t* b) { tensor_f32_x_f32(a, b, f32_sub_f32); }
+void tensor_f32_mul_f32(tensor_t* a, tensor_t* b) { tensor_f32_x_f32(a, b, f32_mul_f32); }
+void tensor_f32_div_f32(tensor_t* a, tensor_t* b) { tensor_f32_x_f32(a, b, f32_div_f32); }
 
 f32 tensor_dot_f32(tensor_t* a, tensor_t* b) {
 	assert(a->dimensions == 1 && b->dimensions == 1);

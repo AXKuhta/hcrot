@@ -72,6 +72,63 @@ void test_inplace_add_1() {
 	free_tensor(b);
 }
 
+void test_inplace_sub_1() {
+	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+		1, 2,
+		3, 4
+	));
+
+	tensor_t* b = array_tensor(f32, Shape(2, 2), Array_f32(
+		5, 6,
+		7, 8
+	));
+
+	tensor_f32_sub_f32(a, b);
+
+	assert(rw(f32, a, 0, 0) == -4 && rw(f32, a, 0, 1) == -4 && rw(f32, a, 1, 0) == -4 && rw(f32, a, 1, 1) == -4);
+
+	free_tensor(a);
+	free_tensor(b);
+}
+
+void test_inplace_mul_1() {
+	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+		1, 2,
+		3, 4
+	));
+
+	tensor_t* b = array_tensor(f32, Shape(2, 2), Array_f32(
+		5, 6,
+		7, 8
+	));
+
+	tensor_f32_mul_f32(a, b);
+
+	assert(rw(f32, a, 0, 0) == 5 && rw(f32, a, 0, 1) == 12 && rw(f32, a, 1, 0) == 21 && rw(f32, a, 1, 1) == 32);
+
+	free_tensor(a);
+	free_tensor(b);
+}
+
+void test_inplace_div_1() {
+	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+		1, 2,
+		3, 4
+	));
+
+	tensor_t* b = array_tensor(f32, Shape(2, 2), Array_f32(
+		5, 6,
+		7, 8
+	));
+
+	tensor_f32_div_f32(a, b);
+
+	assert(rw(f32, a, 0, 0) == 1.0f/5.0f && rw(f32, a, 0, 1) == 1.0f/3.0f && rw(f32, a, 1, 0) == 3.0f/7.0f && rw(f32, a, 1, 1) == 4.0f/8.0f);
+
+	free_tensor(a);
+	free_tensor(b);
+}
+
 void test_dot_1() {
 	tensor_t* a = array_tensor(f32, Shape(5), Array_f32(
 		6, 9, 9, 8, 6
@@ -91,6 +148,9 @@ void run_tests() {
 	test_set_get_1();
 	test_set_get_2();
 	test_inplace_add_1();
+	test_inplace_sub_1();
+	test_inplace_mul_1();
+	test_inplace_div_1();
 	test_dot_1();
 
 	printf("Self-testing OK\n");

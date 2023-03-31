@@ -14,17 +14,28 @@ static int strides_cleanly(const size_t size) {
 	return size % K_STRIDE == 0;
 }
 
-void f32_add_f32(f32* restrict a, f32* restrict b, const size_t size) {
+// A[i] += B[i]
+static void elementwise_inplace(f32* restrict a, f32* restrict b, const size_t size, void fn(f32* a, f32* b)) {
 	assert(strides_cleanly(size));
 
 	size_t elements = size / sizeof(f32);
 
 	for (size_t i = 0; i < elements; i += K_STRIDE_F32) {
 		for (size_t j = 0; j < K_STRIDE_F32; j++) {
-			a[i + j] += b[i + j];
+			fn(a + i + j, b + i + j);
 		}
 	}
 }
+
+static void f32_add_f32_inplace(f32* a, f32* b) { *a += *b; }
+static void f32_sub_f32_inplace(f32* a, f32* b) { *a -= *b; }
+static void f32_mul_f32_inplace(f32* a, f32* b) { *a *= *b; }
+static void f32_div_f32_inplace(f32* a, f32* b) { *a /= *b; }
+
+void f32_add_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, f32_add_f32_inplace); }
+void f32_sub_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, f32_sub_f32_inplace); }
+void f32_mul_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, f32_mul_f32_inplace); }
+void f32_div_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, f32_div_f32_inplace); }
 
 f32 dot_f32_f32(f32* restrict a, f32* restrict b, const size_t size) {
 	assert(strides_cleanly(size));
