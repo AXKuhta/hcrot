@@ -1,11 +1,15 @@
 
 // ============================================================================
-// SHAPING
+// SHAPING + INITIALIZERS
 // ============================================================================
 
 // Shape(4, 16) => 2, (size_t[]){4, 16}
-#define Shape(...) (sizeof((size_t[]){__VA_ARGS__}) / sizeof(size_t)), ((size_t[]){__VA_ARGS__})
-#define Index(...) Shape(__VA_ARGS__)
+#define Array(datatype, ...) (sizeof((datatype[]){__VA_ARGS__}) / sizeof(datatype)), ((datatype[]){__VA_ARGS__})
+#define Shape(...) Array(size_t, __VA_ARGS__)
+#define Index(...) Array(size_t, __VA_ARGS__)
+
+#define Array_f32(...) Array(f32, __VA_ARGS__)
+#define Array_i32(...) Array(i32, __VA_ARGS__)
 
 // ============================================================================
 // TENSOR STRUCTURE
@@ -38,9 +42,18 @@ static size_t apply_padding(size_t size) {
 
 // Size annotations for compiler to warn you if you go out of bounds
 // At least on static indices
+// Also zeroize the padding
 static tensor_t __unused * alloc_storage(size_t element_size, tensor_t* tensor) {
-	tensor->storage_size = apply_padding(element_size * tensor->elements);
-	tensor->storage.memory = malloc(tensor->storage_size);
+	size_t base_size = element_size * tensor->elements;
+	size_t padded_size = apply_padding(base_size);
+
+	char* memory = malloc(padded_size);
+
+	for (size_t i = base_size; i < padded_size; i++)
+		memory[i] = 0;
+
+	tensor->storage_size = padded_size;
+	tensor->storage.memory = memory;
 
 	return tensor;
 }
@@ -48,6 +61,8 @@ static tensor_t __unused * alloc_storage(size_t element_size, tensor_t* tensor) 
 #define zeros_tensor(datatype, ...) zeros_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(Shape(__VA_ARGS__))))
 #define ones_tensor(datatype, ...) ones_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(Shape(__VA_ARGS__))))
 #define rand_tensor(datatype, ...) rand_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(Shape(__VA_ARGS__))))
+#define _array_tensor(datatype, shape_size, shape, array_size, array) array_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(shape_size, shape)), array_size, array)
+#define array_tensor(...) _array_tensor(__VA_ARGS__)
 
 // ============================================================================
 // PROTOTYPES
@@ -58,10 +73,12 @@ tensor_t* alloc_tensor(size_t shape_dimensions, size_t shape[]);
 tensor_t* zeros_init_f32_tensor(tensor_t* tensor);
 tensor_t* ones_init_f32_tensor(tensor_t* tensor);
 tensor_t* rand_init_f32_tensor(tensor_t* tensor);
+tensor_t* array_init_f32_tensor(tensor_t* tensor, size_t array_size, f32 array[]);
 
 tensor_t* zeros_init_i32_tensor(tensor_t* tensor);
 tensor_t* ones_init_i32_tensor(tensor_t* tensor);
 tensor_t* rand_init_i32_tensor(tensor_t* tensor);
+tensor_t* array_init_i32_tensor(tensor_t* tensor, size_t array_size, i32 array[]);
 
 void free_tensor(tensor_t* tensor);
 

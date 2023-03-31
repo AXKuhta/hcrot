@@ -57,6 +57,15 @@ tensor_t* rand_init_f32_tensor(tensor_t* tensor) {
 	return tensor;
 }
 
+tensor_t* array_init_f32_tensor(tensor_t* tensor, size_t array_size, f32 array[]) {
+	assert(tensor->elements == array_size);
+
+	for (size_t i = 0, elements = tensor->elements; i < elements; i++)
+		tensor->storage.f32[i] = array[i];
+
+	return tensor;
+}
+
 // ============================================================================
 // i32
 // ============================================================================
@@ -78,6 +87,15 @@ tensor_t* ones_init_i32_tensor(tensor_t* tensor) {
 tensor_t* rand_init_i32_tensor(tensor_t* tensor) {
 	for (size_t i = 0, elements = tensor->elements; i < elements; i++)
 		tensor->storage.i32[i] = rand();
+
+	return tensor;
+}
+
+tensor_t* array_init_i32_tensor(tensor_t* tensor, size_t array_size, i32 array[]) {
+	assert(tensor->elements == array_size);
+
+	for (size_t i = 0, elements = tensor->elements; i < elements; i++)
+		tensor->storage.i32[i] = array[i];
 
 	return tensor;
 }

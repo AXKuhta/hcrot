@@ -25,19 +25,11 @@ void test_set_get_1() {
 }
 
 void test_set_get_2() {
-	tensor_t* x = zeros_tensor(f32, 3, 3);
-
-	rw(f32, x, 0, 0) = 8;
-	rw(f32, x, 0, 1) = 1;
-	rw(f32, x, 0, 2) = 5;
-
-	rw(f32, x, 1, 0) = 2;
-	rw(f32, x, 1, 1) = 9;
-	rw(f32, x, 1, 2) = 7;
-
-	rw(f32, x, 2, 0) = 2;
-	rw(f32, x, 2, 1) = 4;
-	rw(f32, x, 2, 2) = 6;
+	tensor_t* x = array_tensor(f32, Shape(3, 3), Array_f32(
+		8, 1, 5,
+		2, 9, 7,
+		2, 4, 6
+	));
 
 	f32 det = 0.0;
 
@@ -62,41 +54,37 @@ void test_set_get_2() {
 }
 
 void test_inplace_add_1() {
-	tensor_t* a = zeros_tensor(f32, 2, 2);
-	tensor_t* b = zeros_tensor(f32, 2, 2);
+	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+		1, 2,
+		3, 4
+	));
 
-	rw(f32, a, 0, 0) = 1;
-	rw(f32, a, 0, 1) = 2;
-	rw(f32, a, 1, 0) = 3;
-	rw(f32, a, 1, 1) = 4;
-
-	rw(f32, b, 0, 0) = 5;
-	rw(f32, b, 0, 1) = 6;
-	rw(f32, b, 1, 0) = 7;
-	rw(f32, b, 1, 1) = 8;
+	tensor_t* b = array_tensor(f32, Shape(2, 2), Array_f32(
+		5, 6,
+		7, 8
+	));
 
 	tensor_f32_add_f32(a, b);
 
 	assert(rw(f32, a, 0, 0) == 6 && rw(f32, a, 0, 1) == 8 && rw(f32, a, 1, 0) == 10 && rw(f32, a, 1, 1) == 12);
+
+	free_tensor(a);
+	free_tensor(b);
 }
 
 void test_dot_1() {
-	tensor_t* a = zeros_tensor(f32, 5);
-	tensor_t* b = zeros_tensor(f32, 5);
+	tensor_t* a = array_tensor(f32, Shape(5), Array_f32(
+		6, 9, 9, 8, 6
+	));
 
-	rw(f32, a, 0) = 6;
-	rw(f32, a, 1) = 9;
-	rw(f32, a, 2) = 9;
-	rw(f32, a, 3) = 8;
-	rw(f32, a, 4) = 6;
-
-	rw(f32, b, 0) = 2;
-	rw(f32, b, 1) = 2;
-	rw(f32, b, 2) = 3;
-	rw(f32, b, 3) = 4;
-	rw(f32, b, 4) = 5;
+	tensor_t* b = array_tensor(f32, Shape(5), Array_f32(
+		2, 2, 3, 4, 5
+	));
 
 	assert(tensor_dot_f32(a, b) == 119.0);
+
+	free_tensor(a);
+	free_tensor(b);
 }
 
 void run_tests() {
