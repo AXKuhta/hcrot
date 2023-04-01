@@ -112,6 +112,19 @@ static double bench_sum(size_t trials) {
 	return (double)elapsed / (double)trials;
 }
 
+static double bench_mean(size_t trials) {
+	tensor_t* x = rand_tensor(f32, 50277);
+
+	uint64_t start = nanoseconds();
+
+	for (size_t i = 0; i < trials; i++)
+		tensor_mean_f32(x);
+
+	uint64_t elapsed = nanoseconds() - start;
+
+	return (double)elapsed / (double)trials;
+}
+
 static double bench_dot(size_t trials) {
 	tensor_t* a = rand_tensor(f32, 50277);
 	tensor_t* b = rand_tensor(f32, 50277);
@@ -142,5 +155,6 @@ int main() {
 	bench(bench_min);
 	bench(bench_max);
 	bench(bench_sum);
+	bench(bench_mean);
 	bench(bench_dot);
 }

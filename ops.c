@@ -40,6 +40,10 @@ f32 tensor_min_f32(tensor_t* x) { elem_pad(x); return f32_min(x->storage.f32, x-
 f32 tensor_max_f32(tensor_t* x) { elem_pad(x); return f32_max(x->storage.f32, x->storage_size); }
 f32 tensor_sum_f32(tensor_t* x) { zero_pad(x); return f32_sum(x->storage.f32, x->storage_size); }
 
+f32 tensor_mean_f32(tensor_t* x) {
+	return tensor_sum_f32(x) / (f32)x->elements;
+}
+
 f32 tensor_dot_f32(tensor_t* a, tensor_t* b) {
 	assert(a->dimensions == 1 && b->dimensions == 1);
 	assert(no_overlap(a, b));

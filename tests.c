@@ -154,6 +154,18 @@ void test_sum_1() {
 	free_tensor(x);
 }
 
+void test_mean_1() {
+	tensor_t* x = array_tensor(f32, Shape(3, 3), Array_f32(
+		8, 1, 5,
+		2, 9, 7,
+		2, 4, 6
+	));
+
+	assert(tensor_mean_f32(x) == 44.0f/9.0f);
+
+	free_tensor(x);
+}
+
 void test_dot_1() {
 	tensor_t* a = array_tensor(f32, Shape(5), Array_f32(
 		6, 9, 9, 8, 6
@@ -178,6 +190,7 @@ void run_tests() {
 	test_inplace_div_1();
 	test_min_max_1();
 	test_sum_1();
+	test_mean_1();
 	test_dot_1();
 
 	printf("Self-testing OK\n");
