@@ -38,7 +38,7 @@ void f32_mul_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, 
 void f32_div_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, f32_div_f32_inplace); }
 
 // acc = fn(acc, A[i])
-static f32 reduce(f32* restrict x, const size_t size, f32 fn(f32 acc, f32 x), f32 acc_init) {
+static f32 reduce(f32* restrict x, const size_t size, f32 fn(f32 a, f32 b), f32 acc_init) {
 	assert(strides_cleanly(size));
 
 	size_t elements = size / sizeof(f32);
