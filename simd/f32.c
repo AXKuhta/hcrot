@@ -32,10 +32,12 @@ static f32 sub(f32 a, f32 b) { return a - b; }
 static f32 mul(f32 a, f32 b) { return a * b; }
 static f32 div(f32 a, f32 b) { return a / b; }
 
-void f32_add_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, add); }
-void f32_sub_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, sub); }
-void f32_mul_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, mul); }
-void f32_div_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, div); }
+#define flat __attribute__((flatten))
+
+flat void f32_add_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, add); }
+flat void f32_sub_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, sub); }
+flat void f32_mul_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, mul); }
+flat void f32_div_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, div); }
 
 // acc = fn(acc, A[i])
 static f32 reduce(f32* restrict x, const size_t size, f32 fn(f32 a, f32 b), f32 acc_init) {
@@ -64,9 +66,9 @@ static f32 min(f32 a, f32 b) { return a < b ? a : b; }
 static f32 max(f32 a, f32 b) { return a > b ? a : b; }
 static f32 sum(f32 a, f32 b) { return a + b; }
 
-f32 f32_min(f32* x, const size_t size) { return reduce(x, size, min, x[0]); }
-f32 f32_max(f32* x, const size_t size) { return reduce(x, size, max, x[0]); }
-f32 f32_sum(f32* x, const size_t size) { return reduce(x, size, sum, 0); }
+flat f32 f32_min(f32* x, const size_t size) { return reduce(x, size, min, x[0]); }
+flat f32 f32_max(f32* x, const size_t size) { return reduce(x, size, max, x[0]); }
+flat f32 f32_sum(f32* x, const size_t size) { return reduce(x, size, sum, 0); }
 
 // acc += A[i] * B[i]
 f32 dot_f32_f32(f32* restrict a, f32* restrict b, const size_t size) {
