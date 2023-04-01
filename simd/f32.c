@@ -37,6 +37,38 @@ void f32_sub_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, 
 void f32_mul_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, f32_mul_f32_inplace); }
 void f32_div_f32(f32* a, f32* b, const size_t size) { elementwise_inplace(a, b, size, f32_div_f32_inplace); }
 
+// acc = fn(acc, A[i])
+static f32 reduce(f32* restrict x, const size_t size, f32 fn(f32 acc, f32 x), f32 acc_init) {
+	assert(strides_cleanly(size));
+
+	size_t elements = size / sizeof(f32);
+	f32 accs[K_STRIDE_F32];
+	f32 acc = acc_init;
+
+	for (size_t i = 0; i < K_STRIDE_F32; i++)
+		accs[i] = acc_init;
+
+	for (size_t i = 0; i < elements; i += K_STRIDE_F32) {
+		for (size_t j = 0; j < K_STRIDE_F32; j++) {
+			accs[j] = fn(x[i + j], accs[j]);
+		}
+	}
+
+	for (size_t i = 0; i < K_STRIDE_F32; i++)
+		acc = fn(accs[i], acc);
+
+	return acc;
+}
+
+static f32 min(f32 a, f32 b) { return a < b ? a : b; }
+static f32 max(f32 a, f32 b) { return a > b ? a : b; }
+static f32 sum(f32 a, f32 b) { return a + b; }
+
+f32 f32_min(f32* x, const size_t size) { return reduce(x, size, min, x[0]); }
+f32 f32_max(f32* x, const size_t size) { return reduce(x, size, max, x[0]); }
+f32 f32_sum(f32* x, const size_t size) { return reduce(x, size, sum, 0); }
+
+// acc += A[i] * B[i]
 f32 dot_f32_f32(f32* restrict a, f32* restrict b, const size_t size) {
 	assert(strides_cleanly(size));
 

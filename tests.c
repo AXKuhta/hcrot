@@ -129,6 +129,31 @@ void test_inplace_div_1() {
 	free_tensor(b);
 }
 
+void test_min_max_1() {
+	tensor_t* x = array_tensor(f32, Shape(3, 3), Array_f32(
+		8, 1, 5,
+		2, 9, 7,
+		2, 4, 6
+	));
+
+	assert(tensor_min_f32(x) == 1.0f);
+	assert(tensor_max_f32(x) == 9.0f);
+
+	free_tensor(x);
+}
+
+void test_sum_1() {
+	tensor_t* x = array_tensor(f32, Shape(3, 3), Array_f32(
+		8, 1, 5,
+		2, 9, 7,
+		2, 4, 6
+	));
+
+	assert(tensor_sum_f32(x) == 44.0f);
+
+	free_tensor(x);
+}
+
 void test_dot_1() {
 	tensor_t* a = array_tensor(f32, Shape(5), Array_f32(
 		6, 9, 9, 8, 6
@@ -151,6 +176,8 @@ void run_tests() {
 	test_inplace_sub_1();
 	test_inplace_mul_1();
 	test_inplace_div_1();
+	test_min_max_1();
+	test_sum_1();
 	test_dot_1();
 
 	printf("Self-testing OK\n");

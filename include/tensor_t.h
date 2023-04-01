@@ -42,18 +42,12 @@ static size_t apply_padding(size_t size) {
 
 // Size annotations for compiler to warn you if you go out of bounds
 // At least on static indices
-// Also zeroize the padding
-static tensor_t __unused * alloc_storage(size_t element_size, tensor_t* tensor) {
+static __attribute__((unused)) tensor_t* alloc_storage(size_t element_size, tensor_t* tensor) {
 	size_t base_size = element_size * tensor->elements;
 	size_t padded_size = apply_padding(base_size);
 
-	char* memory = malloc(padded_size);
-
-	for (size_t i = base_size; i < padded_size; i++)
-		memory[i] = 0;
-
 	tensor->storage_size = padded_size;
-	tensor->storage.memory = memory;
+	tensor->storage.memory = malloc(padded_size);
 
 	return tensor;
 }
@@ -86,7 +80,7 @@ void free_tensor(tensor_t* tensor);
 // INDEXING
 // ============================================================================
 
-static size_t __unused linear_index(const tensor_t* tensor, size_t index_dimensions, size_t index[]) {
+static __attribute__((unused)) size_t linear_index(const tensor_t* tensor, size_t index_dimensions, size_t index[]) {
 	assert(tensor->dimensions >= index_dimensions);
 
 	size_t offset = tensor->dimensions - index_dimensions;
