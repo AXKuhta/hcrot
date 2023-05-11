@@ -36,18 +36,13 @@ typedef struct tensor_t {
 // TENSOR CREATION
 // ============================================================================
 
-static size_t apply_padding(size_t size) {
-	return size + (-size % K_STRIDE);
-}
-
 // Size annotations for compiler to warn you if you go out of bounds
 // At least on static indices
 static __attribute__((unused)) tensor_t* alloc_storage(size_t element_size, tensor_t* tensor) {
-	size_t base_size = element_size * tensor->elements;
-	size_t padded_size = apply_padding(base_size);
+	size_t size = element_size * tensor->elements;
 
-	tensor->storage_size = padded_size;
-	tensor->storage.memory = malloc(padded_size);
+	tensor->storage.memory = malloc(size);
+	tensor->storage_size = size;
 
 	return tensor;
 }
