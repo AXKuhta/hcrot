@@ -17,14 +17,14 @@ static f32 div(f32 a, f32 b) { return a / b; }
 // AVX512F 	1 op 	(-O2 -march=icelake-server)
 #define K_STRIDE_F32 (K_STRIDE / sizeof(f32))
 
-#define FOR_HEAD(expr) for (size_t i = 0; i < head; i += K_STRIDE_F32) for (size_t j = 0; j < K_STRIDE_F32; j++) expr
-#define FOR_TAIL(expr) for (size_t i = head, j = 0; j < tail; j++) expr
+#define HEAD (elements & ~(K_STRIDE_F32 - 1))
+#define TAIL (elements & (K_STRIDE_F32 - 1))
+#define FOR_HEAD(expr) for (size_t i = 0; i < HEAD; i += K_STRIDE_F32) for (size_t j = 0; j < K_STRIDE_F32; j++) expr
+#define FOR_TAIL(expr) for (size_t i = HEAD, j = 0; j < TAIL; j++) expr
 
 // A[i] += B[i]
 static void elementwise_inplace_ab(f32* restrict a, f32* restrict b, const size_t size, f32 fn(f32 a, f32 b)) {
 	size_t elements = size / sizeof(f32);
-	size_t head = elements & ~(K_STRIDE_F32 - 1);
-	size_t tail = elements & (K_STRIDE_F32 - 1);
 
 	FOR_HEAD( a[i + j] = fn(a[i + j], b[i + j]) );
 	FOR_TAIL( a[i + j] = fn(a[i + j], b[i + j]) );
@@ -33,8 +33,6 @@ static void elementwise_inplace_ab(f32* restrict a, f32* restrict b, const size_
 // A[i] += x
 static void elementwise_inplace_ax(f32* a, f32 x, const size_t size, f32 fn(f32 a, f32 b)) {
 	size_t elements = size / sizeof(f32);
-	size_t head = elements & ~(K_STRIDE_F32 - 1);
-	size_t tail = elements & (K_STRIDE_F32 - 1);
 
 	FOR_HEAD( a[i + j] = fn(a[i + j], x) );
 	FOR_TAIL( a[i + j] = fn(a[i + j], x) );
@@ -53,8 +51,6 @@ flat void f32_div_x(f32* a, f32 x, const size_t size) { elementwise_inplace_ax(a
 // acc = fn(acc, A[i])
 static f32 reduce(f32* restrict x, const size_t size, f32 fn(f32 a, f32 b), f32 acc_init) {
 	size_t elements = size / sizeof(f32);
-	size_t head = elements & ~(K_STRIDE_F32 - 1);
-	size_t tail = elements & (K_STRIDE_F32 - 1);
 
 	f32 accs[K_STRIDE_F32];
 	f32 acc = acc_init;
@@ -83,8 +79,6 @@ flat f32 f32_sum(f32* x, const size_t size) { return reduce(x, size, sum, 0); }
 // acc += A[i] * B[i]
 f32 dot_f32_f32(f32* restrict a, f32* restrict b, const size_t size) {
 	size_t elements = size / sizeof(f32);
-	size_t head = elements & ~(K_STRIDE_F32 - 1);
-	size_t tail = elements & (K_STRIDE_F32 - 1);
 
 	f32 accs[K_STRIDE_F32] = {0.0};
 	f32 acc = 0.0;
