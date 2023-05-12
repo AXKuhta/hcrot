@@ -129,6 +129,58 @@ void test_inplace_div_1() {
 	free_tensor(b);
 }
 
+void test_inplace_add_x_1() {
+	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+		1, 2,
+		3, 4
+	));
+
+	tensor_f32_add_x(a, 3);
+
+	assert(rw(f32, a, 0, 0) == 4 && rw(f32, a, 0, 1) == 5 && rw(f32, a, 1, 0) == 6 && rw(f32, a, 1, 1) == 7);
+
+	free_tensor(a);
+}
+
+void test_inplace_sub_x_1() {
+	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+		1, 2,
+		3, 4
+	));
+
+	tensor_f32_sub_x(a, 3);
+
+	assert(rw(f32, a, 0, 0) == -2 && rw(f32, a, 0, 1) == -1 && rw(f32, a, 1, 0) == 0 && rw(f32, a, 1, 1) == 1);
+
+	free_tensor(a);
+}
+
+void test_inplace_mul_x_1() {
+	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+		1, 2,
+		3, 4
+	));
+
+	tensor_f32_mul_x(a, 3);
+
+	assert(rw(f32, a, 0, 0) == 3 && rw(f32, a, 0, 1) == 6 && rw(f32, a, 1, 0) == 9 && rw(f32, a, 1, 1) == 12);
+
+	free_tensor(a);
+}
+
+void test_inplace_div_x_1() {
+	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+		1, 2,
+		3, 4
+	));
+
+	tensor_f32_div_x(a, 2);
+
+	assert(rw(f32, a, 0, 0) == 0.5 && rw(f32, a, 0, 1) == 1 && rw(f32, a, 1, 0) == 1.5 && rw(f32, a, 1, 1) == 2);
+
+	free_tensor(a);
+}
+
 void test_min_max_1() {
 	tensor_t* x = array_tensor(f32, Shape(3, 3), Array_f32(
 		8, 1, 5,
@@ -188,6 +240,10 @@ void run_tests() {
 	test_inplace_sub_1();
 	test_inplace_mul_1();
 	test_inplace_div_1();
+	test_inplace_add_x_1();
+	test_inplace_sub_x_1();
+	test_inplace_mul_x_1();
+	test_inplace_div_x_1();
 	test_min_max_1();
 	test_sum_1();
 	test_mean_1();

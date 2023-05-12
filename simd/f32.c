@@ -30,10 +30,25 @@ static void elementwise_inplace_ab(f32* restrict a, f32* restrict b, const size_
 	FOR_TAIL( a[i + j] = fn(a[i + j], b[i + j]) );
 }
 
+// A[i] += x
+static void elementwise_inplace_ax(f32* a, f32 x, const size_t size, f32 fn(f32 a, f32 b)) {
+	size_t elements = size / sizeof(f32);
+	size_t head = elements & ~(K_STRIDE_F32 - 1);
+	size_t tail = elements & (K_STRIDE_F32 - 1);
+
+	FOR_HEAD( a[i + j] = fn(a[i + j], x) );
+	FOR_TAIL( a[i + j] = fn(a[i + j], x) );
+}
+
 flat void f32_add_f32(f32* a, f32* b, const size_t size) { elementwise_inplace_ab(a, b, size, add); }
 flat void f32_sub_f32(f32* a, f32* b, const size_t size) { elementwise_inplace_ab(a, b, size, sub); }
 flat void f32_mul_f32(f32* a, f32* b, const size_t size) { elementwise_inplace_ab(a, b, size, mul); }
 flat void f32_div_f32(f32* a, f32* b, const size_t size) { elementwise_inplace_ab(a, b, size, div); }
+
+flat void f32_add_x(f32* a, f32 x, const size_t size) { elementwise_inplace_ax(a, x, size, add); }
+flat void f32_sub_x(f32* a, f32 x, const size_t size) { elementwise_inplace_ax(a, x, size, sub); }
+flat void f32_mul_x(f32* a, f32 x, const size_t size) { elementwise_inplace_ax(a, x, size, mul); }
+flat void f32_div_x(f32* a, f32 x, const size_t size) { elementwise_inplace_ax(a, x, size, div); }
 
 // acc = fn(acc, A[i])
 static f32 reduce(f32* restrict x, const size_t size, f32 fn(f32 a, f32 b), f32 acc_init) {

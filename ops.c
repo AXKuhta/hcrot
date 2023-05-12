@@ -16,17 +16,26 @@ static int same_size(tensor_t* a, tensor_t* b) {
 	return a->storage_size == b->storage_size;
 }
 
-static void tensor_f32_x_f32(tensor_t* a, tensor_t* b, void fn(f32* a, f32* b, const size_t size)) {
+static void apply_f32_f32(tensor_t* a, tensor_t* b, void fn(f32* a, f32* b, const size_t size)) {
 	assert(no_overlap(a, b));
 	assert(same_size(a, b));
 
 	fn(a->storage.f32, b->storage.f32, a->storage_size);
 }
 
-void tensor_f32_add_f32(tensor_t* a, tensor_t* b) { tensor_f32_x_f32(a, b, f32_add_f32); }
-void tensor_f32_sub_f32(tensor_t* a, tensor_t* b) { tensor_f32_x_f32(a, b, f32_sub_f32); }
-void tensor_f32_mul_f32(tensor_t* a, tensor_t* b) { tensor_f32_x_f32(a, b, f32_mul_f32); }
-void tensor_f32_div_f32(tensor_t* a, tensor_t* b) { tensor_f32_x_f32(a, b, f32_div_f32); }
+static void apply_f32_x(tensor_t* a, f32 x, void fn(f32* a, f32 x, const size_t size)) {
+	fn(a->storage.f32, x, a->storage_size);
+}
+
+void tensor_f32_add_f32(tensor_t* a, tensor_t* b) { apply_f32_f32(a, b, f32_add_f32); }
+void tensor_f32_sub_f32(tensor_t* a, tensor_t* b) { apply_f32_f32(a, b, f32_sub_f32); }
+void tensor_f32_mul_f32(tensor_t* a, tensor_t* b) { apply_f32_f32(a, b, f32_mul_f32); }
+void tensor_f32_div_f32(tensor_t* a, tensor_t* b) { apply_f32_f32(a, b, f32_div_f32); }
+
+void tensor_f32_add_x(tensor_t* a, f32 x) { apply_f32_x(a, x, f32_add_x); }
+void tensor_f32_sub_x(tensor_t* a, f32 x) { apply_f32_x(a, x, f32_sub_x); }
+void tensor_f32_mul_x(tensor_t* a, f32 x) { apply_f32_x(a, x, f32_mul_x); }
+void tensor_f32_div_x(tensor_t* a, f32 x) { apply_f32_x(a, x, f32_div_x); }
 
 f32 tensor_min_f32(tensor_t* x) { return f32_min(x->storage.f32, x->storage_size); }
 f32 tensor_max_f32(tensor_t* x) { return f32_max(x->storage.f32, x->storage_size); }

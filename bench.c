@@ -73,6 +73,58 @@ static double bench_inplace_div(size_t trials) {
 	return (double)elapsed / (double)trials;
 }
 
+static double bench_inplace_add_x(size_t trials) {
+	tensor_t* a = rand_tensor(f32, 50277);
+
+	uint64_t start = nanoseconds();
+
+	for (size_t i = 0; i < trials; i++)
+		tensor_f32_add_x(a, 1);
+
+	uint64_t elapsed = nanoseconds() - start;
+
+	return (double)elapsed / (double)trials;
+}
+
+static double bench_inplace_sub_x(size_t trials) {
+	tensor_t* a = rand_tensor(f32, 50277);
+
+	uint64_t start = nanoseconds();
+
+	for (size_t i = 0; i < trials; i++)
+		tensor_f32_sub_x(a, 1);
+
+	uint64_t elapsed = nanoseconds() - start;
+
+	return (double)elapsed / (double)trials;
+}
+
+static double bench_inplace_mul_x(size_t trials) {
+	tensor_t* a = rand_tensor(f32, 50277);
+
+	uint64_t start = nanoseconds();
+
+	for (size_t i = 0; i < trials; i++)
+		tensor_f32_mul_x(a, 1.5);
+
+	uint64_t elapsed = nanoseconds() - start;
+
+	return (double)elapsed / (double)trials;
+}
+
+static double bench_inplace_div_x(size_t trials) {
+	tensor_t* a = rand_tensor(f32, 50277);
+
+	uint64_t start = nanoseconds();
+
+	for (size_t i = 0; i < trials; i++)
+		tensor_f32_div_x(a, 0.75);
+
+	uint64_t elapsed = nanoseconds() - start;
+
+	return (double)elapsed / (double)trials;
+}
+
 static double bench_min(size_t trials) {
 	tensor_t* x = rand_tensor(f32, 50277);
 
@@ -152,6 +204,10 @@ int main() {
 	bench(bench_inplace_sub);
 	bench(bench_inplace_mul);
 	bench(bench_inplace_div);
+	bench(bench_inplace_add_x);
+	bench(bench_inplace_sub_x);
+	bench(bench_inplace_mul_x);
+	bench(bench_inplace_div_x);
 	bench(bench_min);
 	bench(bench_max);
 	bench(bench_sum);
