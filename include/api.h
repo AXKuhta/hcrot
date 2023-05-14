@@ -4,4 +4,3 @@
 #include "initializers.h"
 #include "print.h"
 #include "ops.h"
-#include "transpose.h"

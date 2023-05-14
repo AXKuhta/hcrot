@@ -37,7 +37,7 @@ void free_tensor(tensor_t* tensor) {
 	free(tensor);
 }
 
-tensor_t* clone_tensor_struct(tensor_t* tensor) {
+static tensor_t* clone_tensor_struct(tensor_t* tensor) {
 	size_t struct_size = sizeof(tensor_t) + 2*sizeof(size_t) * tensor->dimensions;
 	tensor_t* clone = malloc(struct_size);
 	memcpy(clone, tensor, struct_size);
@@ -66,10 +66,30 @@ static void contiguous_recursive_fn(void* dst, tensor_t* tensor, size_t base, si
 	}
 }
 
-void* contiguous_storage(tensor_t* tensor) {
+static void* contiguous_storage(tensor_t* tensor) {
 	void* memory = malloc(tensor->element_count * tensor->element_size);
-
 	contiguous_recursive_fn(memory, tensor, 0, 0);
-
 	return memory;
+}
+
+static void swap(size_t* a, size_t* b) {
+	size_t t = *a; *a = *b; *b = t;
+}
+
+tensor_t* transpose_tensor(tensor_t* tensor) {
+	assert(tensor->dimensions == 2);
+
+	size_t rows = tensor->shape[0].size;
+
+	tensor_t* transposed = clone_tensor_struct(tensor);
+
+	transposed->shape[0].stride = 1;
+	transposed->shape[1].stride = rows;
+
+	transposed->storage.memory = contiguous_storage(transposed);
+
+	swap(&transposed->shape[0].stride, &transposed->shape[1].stride);
+	swap(&transposed->shape[0].size, &transposed->shape[1].size);
+
+	return transposed;
 }
