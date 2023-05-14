@@ -193,6 +193,32 @@ static double bench_dot(size_t trials) {
 	return (double)elapsed / (double)trials;
 }
 
+static double bench_transpose_square(size_t trials) {
+	tensor_t* a = rand_tensor(f32, 224, 224);
+
+	uint64_t start = nanoseconds();
+
+	for (size_t i = 0; i < trials; i++)
+		free_tensor(transpose_tensor(a));
+
+	uint64_t elapsed = nanoseconds() - start;
+
+	return (double)elapsed / (double)trials;
+}
+
+static double bench_transpose_nonsquare(size_t trials) {
+	tensor_t* a = rand_tensor(f32, 448, 112);
+
+	uint64_t start = nanoseconds();
+
+	for (size_t i = 0; i < trials; i++)
+		free_tensor(transpose_tensor(a));
+
+	uint64_t elapsed = nanoseconds() - start;
+
+	return (double)elapsed / (double)trials;
+}
+
 static void run_bench(const char* identifier, double fn(size_t)) {
 	printf("%s: %.0lf us/iter\n", identifier, fn(100000)/1000.0);
 }
@@ -213,4 +239,6 @@ int main() {
 	bench(bench_sum);
 	bench(bench_mean);
 	bench(bench_dot);
+	bench(bench_transpose_square);
+	bench(bench_transpose_nonsquare);
 }
