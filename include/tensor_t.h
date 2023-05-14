@@ -52,7 +52,8 @@ static __attribute__((unused)) tensor_t* alloc_storage(size_t element_size, tens
 
 tensor_t* alloc_tensor(size_t shape_dimensions, size_t shape[]);
 void free_tensor(tensor_t* tensor);
-tensor_t* contiguous_tensor(tensor_t* tensor);
+tensor_t* clone_tensor_struct(tensor_t* tensor);
+void* contiguous_storage(tensor_t* tensor);
 
 // ============================================================================
 // INDEXING

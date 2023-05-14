@@ -5,25 +5,24 @@
 #include "tensor_t.h"
 #include "transpose.h"
 
+static void swap(size_t* a, size_t* b) {
+	size_t t = *a; *a = *b; *b = t;
+}
+
 tensor_t* transpose_tensor(tensor_t* tensor) {
 	assert(tensor->dimensions == 2);
 
 	size_t rows = tensor->shape[0].size;
-	size_t cols = tensor->shape[1].size;
 
-	tensor->shape[0].stride = 1;
-	tensor->shape[1].stride = rows;
+	tensor_t* transposed = clone_tensor_struct(tensor);
 
-	tensor_t* transposed = contiguous_tensor(tensor);
+	transposed->shape[0].stride = 1;
+	transposed->shape[1].stride = rows;
 
-	tensor->shape[0].stride = cols;
-	tensor->shape[1].stride = 1;
+	transposed->storage.memory = contiguous_storage(transposed);
 
-	transposed->shape[0].stride = rows;
-	transposed->shape[1].stride = 1;
-
-	transposed->shape[0].size = cols;
-	transposed->shape[1].size = rows;
+	swap(&transposed->shape[0].stride, &transposed->shape[1].stride);
+	swap(&transposed->shape[0].size, &transposed->shape[1].size);
 
 	return transposed;
 }

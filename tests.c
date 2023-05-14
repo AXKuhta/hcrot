@@ -258,26 +258,34 @@ void test_transpose_1() {
 }
 
 void test_transpose_2() {
-	tensor_t* a = array_tensor(f32, Shape(2, 3), Array_f32(
-		1, 2, 3,
-		4, 5, 6
+	tensor_t* a = array_tensor(f32, Shape(2, 5), Array_f32(
+		1, 2, 3, 4, 5,
+		6, 7, 8, 9, 10
 	));
 
-	tensor_t* b = array_tensor(f32, Shape(3, 2), Array_f32(
-		1, 4,
-		2, 5,
-		3, 6
+	tensor_t* b = array_tensor(f32, Shape(5, 2), Array_f32(
+		1, 6,
+		2, 7,
+		3, 8,
+		4, 9,
+		5, 10
 	));
 
-	tensor_t* t = transpose_tensor(a);
+	tensor_t* t_b = transpose_tensor(a);
+	tensor_t* t_a = transpose_tensor(t_b);
 
-	for (size_t i = 0; i < 3; i++)
+	for (size_t i = 0; i < 5; i++)
 		for (size_t j = 0; j < 2; j++)
-			assert(rw(f32, t, i, j) == rw(f32, b, i, j));
+			assert(rw(f32, t_b, i, j) == rw(f32, b, i, j));
+
+	for (size_t i = 0; i < 2; i++)
+		for (size_t j = 0; j < 5; j++)
+			assert(rw(f32, t_a, i, j) == rw(f32, a, i, j));
 
 	free_tensor(a);
 	free_tensor(b);
-	free_tensor(t);
+	free_tensor(t_b);
+	free_tensor(t_a);
 }
 
 void run_tests() {
