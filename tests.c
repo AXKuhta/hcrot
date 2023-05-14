@@ -40,7 +40,7 @@ void test_set_get_2() {
 		for (size_t j = 0; j < 3; j++) {
 			size_t c = j;
 			size_t r = (j + i) % 3;
-			
+
 			pri_diag *= rw(f32, x, r, c);
 			sec_diag *= rw(f32, x, r, 2 - c);
 		}
@@ -233,6 +233,29 @@ void test_dot_1() {
 	free_tensor(b);
 }
 
+void test_transpose_1() {
+	tensor_t* a = array_tensor(f32, Shape(3, 3), Array_f32(
+		1, 2, 3,
+		4, 5, 6,
+		7, 8, 9
+	));
+
+	tensor_t* b = array_tensor(f32, Shape(3, 3), Array_f32(
+		1, 4, 7,
+		2, 5, 8,
+		3, 6, 9
+	));
+
+	transpose_f32_tensor(a);
+
+	for (size_t i = 0; i < 3; i++)
+		for (size_t j = 0; j < 3; j++)
+			assert(rw(f32, a, i, j) == rw(f32, b, i, j));
+
+	free_tensor(a);
+	free_tensor(b);
+}
+
 void run_tests() {
 	test_set_get_1();
 	test_set_get_2();
@@ -248,6 +271,7 @@ void run_tests() {
 	test_sum_1();
 	test_mean_1();
 	test_dot_1();
+	test_transpose_1();
 
 	printf("Self-testing OK\n");
 }
