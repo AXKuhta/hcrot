@@ -22,8 +22,8 @@ typedef struct tensor_t {
 		i32* i32;
 	} storage;
 
-	size_t storage_size;
-	size_t elements;
+	size_t element_count;
+	size_t element_size;
 	size_t dimensions;
 
 	struct {
@@ -39,36 +39,17 @@ typedef struct tensor_t {
 // Size annotations for compiler to warn you if you go out of bounds
 // At least on static indices
 static __attribute__((unused)) tensor_t* alloc_storage(size_t element_size, tensor_t* tensor) {
-	size_t size = element_size * tensor->elements;
-
-	tensor->storage.memory = malloc(size);
-	tensor->storage_size = size;
+	tensor->storage.memory = malloc(element_size * tensor->element_count);
+	tensor->element_size = element_size;
 
 	return tensor;
 }
-
-#define zeros_tensor(datatype, ...) zeros_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(Shape(__VA_ARGS__))))
-#define ones_tensor(datatype, ...) ones_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(Shape(__VA_ARGS__))))
-#define rand_tensor(datatype, ...) rand_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(Shape(__VA_ARGS__))))
-#define _array_tensor(datatype, shape_size, shape, array_size, array) array_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(shape_size, shape)), array_size, array)
-#define array_tensor(...) _array_tensor(__VA_ARGS__)
 
 // ============================================================================
 // PROTOTYPES
 // ============================================================================
 
 tensor_t* alloc_tensor(size_t shape_dimensions, size_t shape[]);
-
-tensor_t* zeros_init_f32_tensor(tensor_t* tensor);
-tensor_t* ones_init_f32_tensor(tensor_t* tensor);
-tensor_t* rand_init_f32_tensor(tensor_t* tensor);
-tensor_t* array_init_f32_tensor(tensor_t* tensor, size_t array_size, f32 array[]);
-
-tensor_t* zeros_init_i32_tensor(tensor_t* tensor);
-tensor_t* ones_init_i32_tensor(tensor_t* tensor);
-tensor_t* rand_init_i32_tensor(tensor_t* tensor);
-tensor_t* array_init_i32_tensor(tensor_t* tensor, size_t array_size, i32 array[]);
-
 void free_tensor(tensor_t* tensor);
 
 // ============================================================================
