@@ -20,6 +20,7 @@ typedef struct tensor_t {
 		void* memory;
 		f32* f32;
 		i32* i32;
+		u8* u8;
 	} storage;
 
 	size_t element_count;
@@ -51,6 +52,7 @@ static __attribute__((unused)) tensor_t* alloc_storage(size_t element_size, tens
 
 tensor_t* alloc_tensor(size_t shape_dimensions, size_t shape[]);
 void free_tensor(tensor_t* tensor);
+tensor_t* contiguous_tensor(tensor_t* tensor);
 
 // ============================================================================
 // INDEXING

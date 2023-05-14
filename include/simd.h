@@ -1,6 +1,7 @@
 
 typedef float f32;
 typedef int i32;
+typedef unsigned char u8;
 
 void f32_add_f32(f32* a, f32* b, const size_t count);
 void f32_sub_f32(f32* a, f32* b, const size_t count);

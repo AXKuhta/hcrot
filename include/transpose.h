@@ -1,2 +1,2 @@
 
-void transpose_f32_tensor(tensor_t* tensor);
+tensor_t* transpose_tensor(tensor_t* tensor);
