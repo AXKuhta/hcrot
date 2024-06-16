@@ -1,7 +1,11 @@
+#include <complex.h>
 
 typedef float f32;
 typedef int i32;
+
 typedef unsigned char u8;
+
+typedef double complex c64;
 
 void f32_add_f32(f32* a, f32* b, const size_t count);
 void f32_sub_f32(f32* a, f32* b, const size_t count);

@@ -71,8 +71,6 @@ static T reduce(T* restrict x, const size_t count, T fn(T a, T b), T acc_init) {
 	return acc;
 }
 
-static T min(T a, T b) { return a < b ? a : b; }
-static T max(T a, T b) { return a > b ? a : b; }
 static T sum(T a, T b) { return a + b; }
 
 #undef FN
@@ -80,6 +78,12 @@ static T sum(T a, T b) { return a + b; }
 #define FN_(a, x) a ## _ ## x
 #define FN(a, x) FN_(a, x)
 
+flat T FN(T, sum) (T* x, const size_t count) { return reduce(x, count, sum, 0); }
+
+#ifndef NO_LT_GT
+static T min(T a, T b) { return a < b ? a : b; }
+static T max(T a, T b) { return a > b ? a : b; }
+
 flat T FN(T, min) (T* x, const size_t count) { return reduce(x, count, min, x[0]); }
 flat T FN(T, max) (T* x, const size_t count) { return reduce(x, count, max, x[0]); }
-flat T FN(T, sum) (T* x, const size_t count) { return reduce(x, count, sum, 0); }
+#endif

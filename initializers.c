@@ -66,3 +66,33 @@ tensor_t* array_init_i32_tensor(tensor_t* tensor, size_t array_size, i32 array[]
 
 	return tensor;
 }
+
+// ============================================================================
+// c64
+// ============================================================================
+
+tensor_t* zeros_init_c64_tensor(tensor_t* tensor) {
+	FOR_EVERY_ELEMENT( tensor->storage.c64[i] = 0 );
+
+	return tensor;
+}
+
+tensor_t* ones_init_c64_tensor(tensor_t* tensor) {
+	FOR_EVERY_ELEMENT( tensor->storage.c64[i] = 1 );
+
+	return tensor;
+}
+
+tensor_t* rand_init_c64_tensor(tensor_t* tensor) {
+	FOR_EVERY_ELEMENT( tensor->storage.c64[i] = rand() + I*rand() );
+
+	return tensor;
+}
+
+tensor_t* array_init_c64_tensor(tensor_t* tensor, size_t array_size, c64 array[]) {
+	assert(tensor->element_count == array_size);
+
+	FOR_EVERY_ELEMENT( tensor->storage.c64[i] = array[i] );
+
+	return tensor;
+}

@@ -15,9 +15,10 @@ static void default_stride(tensor_t* tensor) {
 	}
 }
 
-tensor_t* alloc_tensor(size_t shape_dimensions, size_t shape[]) {
+tensor_t* alloc_tensor(const char* datatype, size_t shape_dimensions, size_t shape[]) {
 	tensor_t* tensor = malloc(sizeof(tensor_t) + sizeof(size_t)*2*shape_dimensions);
 	tensor->dimensions = shape_dimensions;
+	tensor->datatype = datatype;
 	size_t element_count = 1;
 
 	for (size_t i = 0; i < shape_dimensions; i++) {

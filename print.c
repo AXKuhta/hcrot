@@ -17,6 +17,14 @@ static void i32_print_fn(const tensor_t* tensor, size_t index) {
 	printf("%d", tensor->storage.i32[index]);
 }
 
+static void c64_print_fn(const tensor_t* tensor, size_t index) {
+	if (cimag(tensor->storage.c64[index]) >= 0.0) {
+		printf("%.4lf + %.4lfi", creal(tensor->storage.c64[index]), cimag(tensor->storage.c64[index]) );
+	} else {
+		printf("%.4lf - %.4lfi", creal(tensor->storage.c64[index]), -cimag(tensor->storage.c64[index]) );
+	}
+}
+
 static void print_generic(const tensor_t* tensor, void print_fn(const tensor_t* tensor, size_t index)) {
 	const size_t dimensions = tensor->dimensions;
 
@@ -25,7 +33,7 @@ static void print_generic(const tensor_t* tensor, void print_fn(const tensor_t* 
 	for (size_t i = 0; i < dimensions; i++)
 		printf("%zu%s", tensor->shape[i].size, dimensions - i > 1 ? ", " : "");
 
-	printf("), \"%s\")\n", "f32");
+	printf("), \"%s\")\n", tensor->datatype);
 
 	size_t* counters_reload = malloc(dimensions*sizeof(size_t));
 	size_t* counters = malloc(dimensions*sizeof(size_t));
@@ -94,5 +102,13 @@ static void print_generic(const tensor_t* tensor, void print_fn(const tensor_t* 
 }
 
 void print_tensor(const tensor_t* tensor) {
-	print_generic(tensor, f32_print_fn);
+	if (strcmp(tensor->datatype, "f32") == 0) {
+		print_generic(tensor, f32_print_fn);
+	} else if (strcmp(tensor->datatype, "i32") == 0) {
+		print_generic(tensor, i32_print_fn);
+	} else if (strcmp(tensor->datatype, "c64") == 0) {
+		print_generic(tensor, c64_print_fn);
+	} else {
+		assert(0);
+	}
 }

@@ -10,6 +10,7 @@
 
 #define Array_f32(...) Array(f32, __VA_ARGS__)
 #define Array_i32(...) Array(i32, __VA_ARGS__)
+#define Array_c64(...) Array(c64, __VA_ARGS__)
 
 // ============================================================================
 // TENSOR STRUCTURE
@@ -21,8 +22,10 @@ typedef struct tensor_t {
 		f32* f32;
 		i32* i32;
 		u8* u8;
+		c64* c64;
 	} storage;
 
+	const char* datatype;
 	size_t element_count;
 	size_t element_size;
 	size_t dimensions;
@@ -50,7 +53,7 @@ static __attribute__((unused)) tensor_t* alloc_storage(size_t element_size, tens
 // PROTOTYPES
 // ============================================================================
 
-tensor_t* alloc_tensor(size_t shape_dimensions, size_t shape[]);
+tensor_t* alloc_tensor(const char* datatype, size_t shape_dimensions, size_t shape[]);
 void free_tensor(tensor_t* tensor);
 
 tensor_t* transpose_tensor(tensor_t* tensor);

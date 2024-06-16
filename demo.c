@@ -80,17 +80,32 @@ void reduction_ops() {
 	printf("===============================================\n");
 	printf("Reduction operations: min/max/mean\n");
 	printf("===============================================\n");
-	
+
 	tensor_t* a = rand_tensor(f32, 4, 4);
 	print_tensor(a);
 
 	printf("Min: %.4f\n", tensor_min_f32(a));
 	printf("Max: %.4f\n", tensor_max_f32(a));
 	printf("Mean: %.4f\n", tensor_mean_f32(a));
+	printf("\n");
+}
+
+void complex_numbers() {
+	printf("===============================================\n");
+	printf("Complex numbers\n");
+	printf("===============================================\n");
+
+	tensor_t* a = array_tensor(c64, Shape(3), Array_c64(
+		1.0, 1.0 + I*5.0, 1.0 - I*5.0
+	));
+
+	print_tensor(a);
+	printf("\n");
 }
 
 int main() {
 	tensor_initialization();
 	inplace_math();
 	reduction_ops();
+	complex_numbers();
 }
