@@ -2,8 +2,8 @@
 #define zeros_tensor(datatype, ...) zeros_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(#datatype, Shape(__VA_ARGS__))))
 #define ones_tensor(datatype, ...) ones_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(#datatype, Shape(__VA_ARGS__))))
 #define rand_tensor(datatype, ...) rand_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(#datatype, Shape(__VA_ARGS__))))
-#define _array_tensor(datatype, shape_size, shape, array_size, array) array_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(#datatype, shape_size, shape)), array_size, array)
-#define array_tensor(...) _array_tensor(__VA_ARGS__)
+#define _array_tensor(shape_size, shape, datatype, ...) array_init_##datatype##_tensor(alloc_storage(sizeof(datatype), alloc_tensor(#datatype, shape_size, shape)), Array(datatype, __VA_ARGS__))
+#define array_tensor(_, shape_size, shape, ...) _array_tensor(shape_size, shape, __VA_ARGS__)
 
 tensor_t* zeros_init_f32_tensor(tensor_t* tensor);
 tensor_t* ones_init_f32_tensor(tensor_t* tensor);

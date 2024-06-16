@@ -8,9 +8,9 @@
 #define Shape(...) Array(size_t, __VA_ARGS__)
 #define Index(...) Array(size_t, __VA_ARGS__)
 
-#define Array_f32(...) Array(f32, __VA_ARGS__)
-#define Array_i32(...) Array(i32, __VA_ARGS__)
-#define Array_c64(...) Array(c64, __VA_ARGS__)
+#define Array_f32(...) f32, __VA_ARGS__
+#define Array_i32(...) i32, __VA_ARGS__
+#define Array_c64(...) c64, __VA_ARGS__
 
 // ============================================================================
 // TENSOR STRUCTURE
