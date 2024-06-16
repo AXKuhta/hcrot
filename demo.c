@@ -95,7 +95,7 @@ void complex_numbers() {
 	printf("Complex numbers\n");
 	printf("===============================================\n");
 
-	tensor_t* a = array_tensor(c64, Shape(3), Array_c64(
+	tensor_t* a = array_tensor(Shape(3), Array_c64(
 		1.0, 1.0 + I*5.0, 1.0 - I*5.0
 	));
 

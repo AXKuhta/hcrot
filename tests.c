@@ -25,7 +25,7 @@ void test_set_get_1() {
 }
 
 void test_set_get_2() {
-	tensor_t* x = array_tensor(f32, Shape(3, 3), Array_f32(
+	tensor_t* x = array_tensor(Shape(3, 3), Array_f32(
 		8, 1, 5,
 		2, 9, 7,
 		2, 4, 6
@@ -54,12 +54,12 @@ void test_set_get_2() {
 }
 
 void test_inplace_add_1() {
-	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+	tensor_t* a = array_tensor(Shape(2, 2), Array_f32(
 		1, 2,
 		3, 4
 	));
 
-	tensor_t* b = array_tensor(f32, Shape(2, 2), Array_f32(
+	tensor_t* b = array_tensor(Shape(2, 2), Array_f32(
 		5, 6,
 		7, 8
 	));
@@ -73,12 +73,12 @@ void test_inplace_add_1() {
 }
 
 void test_inplace_sub_1() {
-	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+	tensor_t* a = array_tensor(Shape(2, 2), Array_f32(
 		1, 2,
 		3, 4
 	));
 
-	tensor_t* b = array_tensor(f32, Shape(2, 2), Array_f32(
+	tensor_t* b = array_tensor(Shape(2, 2), Array_f32(
 		5, 6,
 		7, 8
 	));
@@ -92,12 +92,12 @@ void test_inplace_sub_1() {
 }
 
 void test_inplace_mul_1() {
-	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+	tensor_t* a = array_tensor(Shape(2, 2), Array_f32(
 		1, 2,
 		3, 4
 	));
 
-	tensor_t* b = array_tensor(f32, Shape(2, 2), Array_f32(
+	tensor_t* b = array_tensor(Shape(2, 2), Array_f32(
 		5, 6,
 		7, 8
 	));
@@ -111,12 +111,12 @@ void test_inplace_mul_1() {
 }
 
 void test_inplace_div_1() {
-	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+	tensor_t* a = array_tensor(Shape(2, 2), Array_f32(
 		1, 2,
 		3, 4
 	));
 
-	tensor_t* b = array_tensor(f32, Shape(2, 2), Array_f32(
+	tensor_t* b = array_tensor(Shape(2, 2), Array_f32(
 		5, 6,
 		7, 8
 	));
@@ -130,7 +130,7 @@ void test_inplace_div_1() {
 }
 
 void test_inplace_add_x_1() {
-	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+	tensor_t* a = array_tensor(Shape(2, 2), Array_f32(
 		1, 2,
 		3, 4
 	));
@@ -143,7 +143,7 @@ void test_inplace_add_x_1() {
 }
 
 void test_inplace_sub_x_1() {
-	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+	tensor_t* a = array_tensor(Shape(2, 2), Array_f32(
 		1, 2,
 		3, 4
 	));
@@ -156,7 +156,7 @@ void test_inplace_sub_x_1() {
 }
 
 void test_inplace_mul_x_1() {
-	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+	tensor_t* a = array_tensor(Shape(2, 2), Array_f32(
 		1, 2,
 		3, 4
 	));
@@ -169,7 +169,7 @@ void test_inplace_mul_x_1() {
 }
 
 void test_inplace_div_x_1() {
-	tensor_t* a = array_tensor(f32, Shape(2, 2), Array_f32(
+	tensor_t* a = array_tensor(Shape(2, 2), Array_f32(
 		1, 2,
 		3, 4
 	));
@@ -182,7 +182,7 @@ void test_inplace_div_x_1() {
 }
 
 void test_min_max_1() {
-	tensor_t* x = array_tensor(f32, Shape(3, 3), Array_f32(
+	tensor_t* x = array_tensor(Shape(3, 3), Array_f32(
 		8, 1, 5,
 		2, 9, 7,
 		2, 4, 6
@@ -195,7 +195,7 @@ void test_min_max_1() {
 }
 
 void test_sum_1() {
-	tensor_t* x = array_tensor(f32, Shape(3, 3), Array_f32(
+	tensor_t* x = array_tensor(Shape(3, 3), Array_f32(
 		8, 1, 5,
 		2, 9, 7,
 		2, 4, 6
@@ -207,7 +207,7 @@ void test_sum_1() {
 }
 
 void test_mean_1() {
-	tensor_t* x = array_tensor(f32, Shape(3, 3), Array_f32(
+	tensor_t* x = array_tensor(Shape(3, 3), Array_f32(
 		8, 1, 5,
 		2, 9, 7,
 		2, 4, 6
@@ -219,11 +219,11 @@ void test_mean_1() {
 }
 
 void test_dot_1() {
-	tensor_t* a = array_tensor(f32, Shape(5), Array_f32(
+	tensor_t* a = array_tensor(Shape(5), Array_f32(
 		6, 9, 9, 8, 6
 	));
 
-	tensor_t* b = array_tensor(f32, Shape(5), Array_f32(
+	tensor_t* b = array_tensor(Shape(5), Array_f32(
 		2, 2, 3, 4, 5
 	));
 
@@ -234,13 +234,13 @@ void test_dot_1() {
 }
 
 void test_transpose_1() {
-	tensor_t* a = array_tensor(f32, Shape(3, 3), Array_f32(
+	tensor_t* a = array_tensor(Shape(3, 3), Array_f32(
 		1, 2, 3,
 		4, 5, 6,
 		7, 8, 9
 	));
 
-	tensor_t* b = array_tensor(f32, Shape(3, 3), Array_f32(
+	tensor_t* b = array_tensor(Shape(3, 3), Array_f32(
 		1, 4, 7,
 		2, 5, 8,
 		3, 6, 9
@@ -258,12 +258,12 @@ void test_transpose_1() {
 }
 
 void test_transpose_2() {
-	tensor_t* a = array_tensor(f32, Shape(2, 5), Array_f32(
+	tensor_t* a = array_tensor(Shape(2, 5), Array_f32(
 		1, 2, 3, 4, 5,
 		6, 7, 8, 9, 10
 	));
 
-	tensor_t* b = array_tensor(f32, Shape(5, 2), Array_f32(
+	tensor_t* b = array_tensor(Shape(5, 2), Array_f32(
 		1, 6,
 		2, 7,
 		3, 8,
