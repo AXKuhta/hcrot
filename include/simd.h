@@ -18,5 +18,3 @@ f32 f32_max(f32* x, const size_t count);
 f32 f32_sum(f32* x, const size_t count);
 
 f32 dot_f32_f32(f32* restrict a, f32* restrict b, const size_t count);
-
-#define K_STRIDE 64

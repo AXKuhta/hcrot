@@ -1,9 +1,5 @@
 #include <stddef.h>
 
-typedef float f32;
-
-#define T f32
-
 static T add(T a, T b) { return a + b; }
 static T sub(T a, T b) { return a - b; }
 static T mul(T a, T b) { return a * b; }
